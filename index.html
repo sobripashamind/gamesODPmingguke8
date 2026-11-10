@@ -3,215 +3,121 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<base target="_top">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>PLTU Neon Run - Meteor City 3D</title>
+<title>PLTU NEON RUN - Meteor City 3D</title>
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-
 <style>
 *{box-sizing:border-box}
-html,body{
- margin:0;width:100%;height:100%;
- overflow:hidden;background:#030516;color:white;
- font-family:Arial,sans-serif;touch-action:none
-}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#030516;color:white;font-family:Arial,sans-serif;touch-action:none}
 #scene{position:fixed;inset:0;width:100%;height:100%}
-#hud{
- position:absolute;top:8px;left:8px;right:8px;
- z-index:5;display:flex;gap:5px;
- justify-content:space-between;pointer-events:none
-}
-.stat{
- background:#06152cdd;border:1px solid cyan;
- border-radius:10px;padding:8px;
- font-size:12px;font-weight:bold
-}
-#quiz{
- position:absolute;z-index:6;top:54px;left:50%;
- transform:translateX(-50%);
- width:min(97%,850px);padding:9px;
- border:2px solid #00eaff;border-radius:14px;
- background:#05112bef;text-align:center;display:none
-}
-#question{
- font-weight:bold;font-size:clamp(13px,2.5vw,19px);
- margin-bottom:8px
-}
-#answers{
- display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
- gap:5px
-}
-.answer{
- min-width:0;padding:4px 2px;background:#122448;
- color:white;border:2px solid #345c8c;
- border-radius:8px;cursor:pointer
-}
-.answer.selected{
- border-color:#ffdf38;background:#33405e;
- box-shadow:0 0 14px #ffdf38
-}
-.answer b{
- display:block;color:#ffe55b;font-size:16px
-}
-.faceFrame{
- width:100%;height:clamp(68px,12vh,120px);
- overflow:hidden;border-radius:5px;
- background:#192b4f
-}
-.faceFrame img{
- display:block;width:100%;height:100%;
- object-fit:cover;
- object-position:center 23%;
-}
-.answer .choice{
- display:block;font-size:clamp(9px,1.6vw,12px);
- overflow-wrap:anywhere;margin-top:3px
-}
-.placeholder{
- height:100%;display:grid;place-items:center;
- font-size:11px;color:#aadaff
-}
-#controls{
- position:absolute;z-index:7;bottom:12px;
- left:12px;right:12px;display:flex;
- justify-content:space-between;pointer-events:none
-}
+#hud{position:absolute;top:8px;left:8px;right:8px;z-index:5;display:flex;justify-content:space-between;gap:4px;pointer-events:none}
+.stat{background:#06152cdd;border:1px solid #00eaff;border-radius:10px;padding:7px;font-size:12px;font-weight:bold}
+#quiz{position:absolute;z-index:6;top:48px;left:50%;transform:translateX(-50%);width:min(99%,850px);padding:6px;border:2px solid #00eaff;border-radius:14px;background:#05112bf2;text-align:center;display:none}
+#question{font-size:clamp(12px,2.4vw,19px);font-weight:bold;margin-bottom:8px}
+#answers{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.answer{min-width:0;padding:4px 2px;background:#122448;color:white;border:2px solid #345c8c;border-radius:8px;cursor:pointer}
+.answer.selected{border-color:#ffdf38;background:#33405e;box-shadow:0 0 14px #ffdf38}
+.answer b{display:block;color:#ffe55b;font-size:16px}
+.faceFrame{width:100%;height:clamp(68px,12vh,120px);overflow:hidden;border-radius:5px;background:#192b4f}
+.faceFrame img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 23%}
+.answer .choice{display:block;font-size:clamp(9px,1.6vw,12px);overflow-wrap:anywhere;margin-top:3px}
+.placeholder{height:100%;display:grid;place-items:center;font-size:10px;color:#aadaff}
+#controls{position:absolute;z-index:7;bottom:12px;left:12px;right:12px;display:flex;justify-content:space-between;pointer-events:none}
 .group{display:flex;gap:8px}
-.ctrl{
- pointer-events:auto;width:62px;height:60px;
- background:#071c40cc;color:white;font-size:26px;
- font-weight:bold;border:2px solid cyan;
- border-radius:15px;touch-action:none
-}
+.ctrl{pointer-events:auto;width:62px;height:60px;background:#071c40cc;color:white;font-size:26px;font-weight:bold;border:2px solid cyan;border-radius:15px;touch-action:none}
 .ctrl:active{background:#167eaf}
-.overlay{
- position:absolute;inset:0;z-index:10;
- display:flex;align-items:center;justify-content:center;
- padding:16px;text-align:center;background:#01051bea
-}
-.panel{
- width:min(95%,480px);padding:22px;
- border:2px solid cyan;border-radius:22px;
- background:linear-gradient(145deg,#142e5b,#090b25);
- box-shadow:0 0 40px #00bfff55
-}
-.panel h1{
- font-size:29px;color:#00eeff;
- text-shadow:0 0 16px cyan
-}
+.overlay{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:16px;text-align:center;background:#01051bea}
+.panel{width:min(95%,480px);padding:22px;border:2px solid cyan;border-radius:22px;background:linear-gradient(145deg,#142e5b,#090b25);box-shadow:0 0 40px #00bfff55}
+.panel h1{font-size:29px;color:#00eeff;text-shadow:0 0 16px cyan}
 .panel p{line-height:1.5}
-.btn{
- border:0;border-radius:14px;padding:14px 27px;
- font-size:18px;font-weight:bold;color:#00152b;
- background:linear-gradient(90deg,#00edff,#bc68ff);
- cursor:pointer
-}
+.btn{border:0;border-radius:14px;padding:14px 27px;font-size:18px;font-weight:bold;color:#00152b;background:linear-gradient(90deg,#00edff,#bc68ff);cursor:pointer}
 .btn:disabled{opacity:.5}
 #loading{font-size:12px;color:#ffe783}
-#msg{
- position:absolute;z-index:8;top:48%;left:50%;
- transform:translate(-50%,-50%);
- background:#031b36eb;border:1px solid cyan;
- padding:16px;border-radius:12px;
- font-size:20px;font-weight:bold;
- display:none;text-align:center;pointer-events:none
-}
-#distance{
- position:absolute;right:10px;bottom:84px;z-index:5;
- background:#06152cbb;border:1px solid #00bfff;
- border-radius:9px;padding:8px;font-size:12px;
- pointer-events:none
-}
-#soundPanel{
- position:absolute;z-index:6;top:49px;right:9px;
- display:flex;gap:6px;align-items:center;
- border:1px solid #24ddff;border-radius:9px;
- background:#06152cdd;padding:5px
-}
-#muteBtn{
- border:0;background:transparent;color:white;
- font-size:18px;cursor:pointer
-}
+#msg{position:absolute;z-index:8;top:48%;left:50%;transform:translate(-50%,-50%);background:#031b36eb;border:1px solid cyan;padding:16px;border-radius:12px;font-size:20px;font-weight:bold;display:none;text-align:center;pointer-events:none}
+#distance{position:absolute;right:10px;bottom:84px;z-index:5;background:#06152cbb;border:1px solid #00bfff;border-radius:9px;padding:8px;font-size:12px;pointer-events:none}
+#soundPanel{position:absolute;z-index:6;top:49px;right:9px;display:flex;gap:6px;align-items:center;border:1px solid #24ddff;border-radius:9px;background:#06152cdd;padding:5px}
+#muteBtn{border:0;background:transparent;color:white;font-size:18px;cursor:pointer}
 #volume{width:95px;accent-color:#00eaff}
 @media(max-width:500px){
- .stat{font-size:10px;padding:6px}
- #quiz{top:48px;width:99%;padding:5px}
- #question{font-size:12px}
- .faceFrame{height:69px}
- .answer .choice{font-size:9px}
- .ctrl{width:56px;height:55px}
- .panel h1{font-size:24px}
- #distance{bottom:77px}
- #soundPanel{top:auto;bottom:76px;left:9px;right:auto}
- #volume{width:65px}
+.stat{font-size:10px;padding:6px}
+#quiz{top:48px;width:99%;padding:5px}
+#question{font-size:12px}
+.faceFrame{height:69px}
+.answer .choice{font-size:9px}
+.ctrl{width:56px;height:55px}
+.panel h1{font-size:24px}
+#distance{bottom:77px}
+#soundPanel{top:auto;bottom:76px;left:9px;right:auto}
+#volume{width:65px}
 }
 </style>
 </head>
-
 <body>
+
 <canvas id="scene"></canvas>
 
 <div id="hud">
- <div class="stat" id="score">⭐ 0</div>
- <div class="stat" id="level">SOAL 0/10</div>
- <div class="stat" id="photoCount">FOTO 0/5</div>
+<div class="stat" id="score">⭐ 0</div>
+<div class="stat" id="level">SOAL 0/10</div>
+<div class="stat" id="photoCount">FOTO 0/5</div>
 </div>
 
 <div id="soundPanel">
- <button id="muteBtn" title="Mute musik">🔊</button>
- <input id="volume" type="range" min="0" max="100" value="85">
+<button id="muteBtn">🔊</button>
+<input id="volume" type="range" min="0" max="100" value="85">
 </div>
 
 <div id="quiz">
- <div id="question"></div>
- <div id="answers"></div>
- <div style="font-size:11px;color:#aceeff;margin-top:5px">
-  Pilih jawaban dengan berpindah ke jalur A–E!
- </div>
+<div id="question"></div>
+<div id="answers"></div>
+<div style="font-size:11px;color:#aceeff;margin-top:5px">
+Pilih jawaban dengan berpindah ke jalur A–E!
+</div>
 </div>
 
 <div id="msg"></div>
 <div id="distance">GERBANG: --</div>
 
 <div id="controls">
- <div class="group">
-  <button class="ctrl" id="left">◀</button>
-  <button class="ctrl" id="right">▶</button>
- </div>
- <div class="group">
-  <button class="ctrl" id="jump">⬆</button>
-  <button class="ctrl" id="duck">⬇</button>
- </div>
+<div class="group">
+<button class="ctrl" id="left">◀</button>
+<button class="ctrl" id="right">▶</button>
+</div>
+<div class="group">
+<button class="ctrl" id="jump">⬆</button>
+<button class="ctrl" id="duck">⬇</button>
+</div>
 </div>
 
 <div id="startScreen" class="overlay">
- <div class="panel">
-  <h1>⚡ PLTU NEON RUN</h1>
-  <h2>METEOR CITY 3D</h2>
-  <p>Musik EDM • Trek Panjang • 10 Soal PLTU</p>
-  <p>◀ ▶ Pindah Jalur<br>⬆ Lompat<br>⬇ Menunduk</p>
-  <p style="color:#ff7777">
-   <b>Menabrak rintangan = GAME OVER</b>
-  </p>
-  <p id="loading">Menyiapkan grafis dan foto...</p>
-  <button id="startBtn" class="btn">▶ MULAI GAME</button>
- </div>
+<div class="panel">
+<h1>⚡ PLTU NEON RUN</h1>
+<h2>METEOR CITY 3D</h2>
+<p>Musik EDM • Trek Panjang • 10 Soal PLTU</p>
+<p>◀ ▶ Pindah Jalur<br>⬆ Lompat<br>⬇ Menunduk</p>
+<p style="color:#ff7777">
+<b>Menabrak rintangan = GAME OVER</b>
+</p>
+<p id="loading">Menyiapkan grafis dan foto...</p>
+<button id="startBtn" class="btn">▶ MULAI GAME</button>
+</div>
 </div>
 
 <div id="endScreen" class="overlay" style="display:none">
- <div class="panel">
-  <h1 id="endTitle">GAME OVER</h1>
-  <p id="endInfo"></p>
-  <button id="restartBtn" class="btn">↻ MAIN LAGI</button>
- </div>
+<div class="panel">
+<h1 id="endTitle">GAME OVER</h1>
+<p id="endInfo"></p>
+<button id="restartBtn" class="btn">↻ MAIN LAGI</button>
+</div>
 </div>
 
 <script>
 "use strict";
 
-// ======================================
-// KONFIGURASI
-// ======================================
+// ==================================
+// KONFIGURASI GAME
+// ==================================
+
 const $=id=>document.getElementById(id);
 const LETTERS=["A","B","C","D","E"];
 
@@ -224,17 +130,19 @@ const PLAYER_Z=10;
 const Z_FACTOR=.12;
 const LANE_X=[-8,-4,0,4,8];
 
-const PHOTO_IDS={
- A:"1pR-dbG7u6-4gUS4RzvGGDlk7kzf-0ITt",
- B:"1atG6Z_QbRR4UHbvSt8l0z1BJBovvjFE6",
- C:"1z3q7X2zUikY6knwmyJruQ7o1SbBkf4_T",
- D:"1xdTTvoYqkzY0SH78JgYv3TeClhXADMl0",
- E:"12y_xHsHCDCyvj8RQ6clD3AKAM0ljgQ9q"
+// ==================================
+// FOTO PNG LANGSUNG DARI GITHUB
+// ==================================
+
+const PHOTO_FILES={
+ A:"./foto-a.png",
+ B:"./foto-b.png",
+ C:"./foto-c.png",
+ D:"./foto-d.png",
+ E:"./foto-e.jpg"
 };
 
-// Titik fokus wajah, dapat diubah per foto.
-// Angka menunjukkan perkiraan posisi pusat wajah
-// dari atas gambar: 0 = atas, 1 = bawah.
+// Posisi fokus wajah pada setiap foto
 const FACE_FOCUS={
  A:{x:.50,y:.24},
  B:{x:.50,y:.24},
@@ -243,71 +151,121 @@ const FACE_FOCUS={
  E:{x:.50,y:.25}
 };
 
+// ==================================
+// 10 SOAL PLTU
+// ==================================
+
 const QUESTIONS=[
  {q:"Apa kepanjangan PLTU?",a:[
- "Pusat Listrik Tenaga Udara","Pembangkit Listrik Tenaga Uap",
- "Pembangkit Listrik Tenaga Uranium","Pusat Listrik Terpadu Umum",
+ "Pusat Listrik Tenaga Udara",
+ "Pembangkit Listrik Tenaga Uap",
+ "Pembangkit Listrik Tenaga Uranium",
+ "Pusat Listrik Terpadu Umum",
  "Pembangkit Listrik Tenaga Umbi"],c:1},
+
  {q:"Apa fungsi boiler pada PLTU?",a:[
- "Mengubah air menjadi uap","Mendinginkan generator",
- "Menyimpan listrik","Memutar kipas","Mengukur tegangan"],c:0},
+ "Mengubah air menjadi uap",
+ "Mendinginkan generator",
+ "Menyimpan listrik",
+ "Memutar kipas",
+ "Mengukur tegangan"],c:0},
+
  {q:"Apa fungsi turbin uap?",a:[
- "Menyimpan bahan bakar","Mendinginkan air",
+ "Menyimpan bahan bakar",
+ "Mendinginkan air",
  "Mengubah energi uap menjadi putaran",
- "Menaikkan tegangan","Membersihkan udara"],c:2},
+ "Menaikkan tegangan",
+ "Membersihkan udara"],c:2},
+
  {q:"Apa fungsi generator?",a:[
- "Menghasilkan batubara","Membuat air laut","Menyimpan uap",
+ "Menghasilkan batubara",
+ "Membuat air laut",
+ "Menyimpan uap",
  "Mengubah energi mekanik menjadi listrik",
  "Mendinginkan boiler"],c:3},
+
  {q:"Alat pengembun uap bekas turbin?",a:[
- "Economizer","Superheater","Generator","Transformator",
+ "Economizer",
+ "Superheater",
+ "Generator",
+ "Transformator",
  "Kondensor"],c:4},
+
  {q:"Fungsi transformator penaik tegangan?",a:[
- "Menurunkan tekanan uap","Menaikkan tegangan listrik",
- "Mengurangi air boiler","Memutar turbin",
+ "Menurunkan tekanan uap",
+ "Menaikkan tegangan listrik",
+ "Mengurangi air boiler",
+ "Memutar turbin",
  "Menghasilkan batubara"],c:1},
+
  {q:"Apa kepanjangan APAR?",a:[
- "Alat Pengaman Aliran Rutin","Alat Pemantau Arus Rendah",
- "Alat Pemadam Api Ringan","Alat Pengatur Air Reservoir",
+ "Alat Pengaman Aliran Rutin",
+ "Alat Pemantau Arus Rendah",
+ "Alat Pemadam Api Ringan",
+ "Alat Pengatur Air Reservoir",
  "Alat Pengendali Asap Ruang"],c:2},
+
  {q:"Tujuan menggunakan APD di PLTU?",a:[
- "Mempercepat turbin","Menaikkan suhu","Menghasilkan listrik",
+ "Mempercepat turbin",
+ "Menaikkan suhu",
+ "Menghasilkan listrik",
  "Melindungi pekerja dari bahaya",
  "Mengurangi tekanan boiler"],c:3},
+
  {q:"Fungsi electrostatic precipitator?",a:[
- "Menangkap partikulat gas buang","Mendinginkan generator",
- "Menyimpan air","Mengukur daya listrik","Memutar pompa"],c:0},
+ "Menangkap partikulat gas buang",
+ "Mendinginkan generator",
+ "Menyimpan air",
+ "Mengukur daya listrik",
+ "Memutar pompa"],c:0},
+
  {q:"Langkah aman sebelum perawatan listrik?",a:[
- "Menaikkan beban","Menghidupkan motor","Melepas APD",
+ "Menaikkan beban",
+ "Menghidupkan motor",
+ "Melepas APD",
  "Mengabaikan prosedur",
  "Melakukan isolasi energi dan LOTO"],c:4}
 ];
 
+// ==================================
+// VARIABEL GAME
+// ==================================
+
 let scene,camera,renderer,clock;
 let robot,body,head,leftLeg,rightLeg;
 let city=[],roadLines=[],meteors=[],gameObjects=[];
-const photos={},photoTextures={},photoStates={};
+
+const photos={};
+const photoTextures={};
+const photoStates={};
+
 let photoLoaded=0;
 let lane=2,score=0,answered=0,progress=0;
 let jumpTime=0,duckTime=0,robotSize=1;
 let state="menu",gameTime=0,messageTime=0;
 let lastQuiz=-1,lastLane=-1;
 
-// ======================================
-// FUNGSI THREE.JS
-// ======================================
+// ==================================
+// MATERIAL DAN OBJEK 3D
+// ==================================
+
 function mat(color,emissive=0,intensity=0){
  return new THREE.MeshStandardMaterial({
   color,metalness:.38,roughness:.37,
   emissive,emissiveIntensity:intensity
  });
 }
+
 function neon(color){
  return new THREE.MeshBasicMaterial({color});
 }
+
 function box(w,h,d,m){
- return new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);
+ return new THREE.Mesh(
+  new THREE.BoxGeometry(w,h,d),m
+ );
 }
+
 function addBox(parent,w,h,d,m,x,y,z){
  const mesh=box(w,h,d,m);
  mesh.position.set(x,y,z);
@@ -315,12 +273,13 @@ function addBox(parent,w,h,d,m,x,y,z){
  return mesh;
 }
 
-// ======================================
-// DUNIA 3D
-// ======================================
+// ==================================
+// MEMBUAT DUNIA 3D
+// ==================================
+
 function setup3D(){
  if(!window.THREE){
-  $("loading").textContent="Three.js gagal dimuat. Periksa koneksi internet.";
+  $("loading").textContent="Three.js gagal dimuat. Periksa internet.";
   $("startBtn").disabled=true;
   return;
  }
@@ -337,9 +296,11 @@ function setup3D(){
   camera.lookAt(0,3,-38);
 
   renderer=new THREE.WebGLRenderer({
-   canvas:$("scene"),antialias:true,
+   canvas:$("scene"),
+   antialias:true,
    powerPreference:"high-performance"
   });
+
   renderer.setSize(innerWidth,innerHeight);
   renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.7));
   renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -376,13 +337,18 @@ function setup3D(){
   });
 
   renderer.setAnimationLoop(animate);
-  $("loading").textContent="Grafis 3D siap. Memuat foto...";
+  $("loading").textContent="Grafis siap. Memuat foto PNG...";
+
  }catch(e){
   console.error(e);
   $("loading").textContent="Grafis gagal: "+e.message;
   $("startBtn").disabled=true;
  }
 }
+
+// ==================================
+// JALAN LIMA JALUR
+// ==================================
 
 function createRoad(){
  const ground=box(250,.3,550,mat(0x070b19));
@@ -395,7 +361,8 @@ function createRoad(){
 
  for(let i=0;i<=5;i++){
   const rail=box(.09,.08,550,
-   neon(i===0||i===5?0xff33eb:0x00baff));
+   neon(i===0||i===5?0xff33eb:0x00baff)
+  );
   rail.position.set(-10+i*4,.05,-135);
   scene.add(rail);
  }
@@ -419,6 +386,10 @@ function createRoad(){
   scene.add(strip);
  });
 }
+
+// ==================================
+// GEDUNG KOTA NEON
+// ==================================
 
 function createCity(){
  const colors=[
@@ -450,10 +421,14 @@ function createCity(){
    }
 
    addBox(g,.15,h,.15,lights,
-    side<0?w/2+.1:-w/2-.1,h/2,d/2+.1);
+    side<0?w/2+.1:-w/2-.1,h/2,d/2+.1
+   );
+
    addBox(g,.12,2,.12,lights,0,h+1,0);
 
-   g.position.set(side*(16+(i%4)*7),0,15-i*9.5);
+   g.position.set(
+    side*(16+(i%4)*7),0,15-i*9.5
+   );
    scene.add(g);
    city.push(g);
   }
@@ -463,11 +438,11 @@ function createCity(){
   for(const side of [-1,1]){
    const g=new THREE.Group();
    const pole=mat(0x57617e);
-
    addBox(g,.15,7,.15,pole,side*12,3.5,0);
    addBox(g,2,.15,.16,pole,side*11,7,0);
    addBox(g,1,.12,.6,neon(0x00eaff),
-    side*10.2,6.9,0);
+    side*10.2,6.9,0
+   );
 
    g.position.z=15-i*13;
    scene.add(g);
@@ -476,8 +451,13 @@ function createCity(){
  }
 }
 
+// ==================================
+// ROBOT 3D
+// ==================================
+
 function createRobot(){
  robot=new THREE.Group();
+
  const chrome=mat(0xc7e7ff,0x1389ff,.15);
  const blue=mat(0x06bce9,0x0055ff,.45);
  const dark=mat(0x15234d);
@@ -500,6 +480,7 @@ function createRobot(){
  addBox(robot,.13,.5,.13,gold,0,4.24,0);
 
  robot.userData.arms=[];
+
  for(const s of [-1,1]){
   const arm=new THREE.Group();
   arm.position.set(s*.9,2.65,0);
@@ -523,8 +504,13 @@ function createRobot(){
  scene.add(robot);
 }
 
+// ==================================
+// BINTANG DAN METEOR
+// ==================================
+
 function createStars(){
  const points=[];
+
  for(let i=0;i<550;i++){
   points.push(
    (Math.random()-.5)*350,
@@ -535,10 +521,13 @@ function createStars(){
 
  const geo=new THREE.BufferGeometry();
  geo.setAttribute("position",
-  new THREE.Float32BufferAttribute(points,3));
+  new THREE.Float32BufferAttribute(points,3)
+ );
 
- scene.add(new THREE.Points(geo,
-  new THREE.PointsMaterial({color:0xffffff,size:.35})
+ scene.add(new THREE.Points(
+  geo,new THREE.PointsMaterial({
+   color:0xffffff,size:.35
+  })
  ));
 
  for(let i=0;i<10;i++){
@@ -546,23 +535,25 @@ function createStars(){
    new THREE.SphereGeometry(.35,8,8),
    new THREE.MeshBasicMaterial({color:0xff8e35})
   );
+
   meteor.position.set(
    (Math.random()-.5)*90,
    35+Math.random()*50,
    -40-Math.random()*140
   );
+
   scene.add(meteor);
   meteors.push(meteor);
  }
 }
 
-// ======================================
-// FOTO: CROP WAJAH UNTUK KARTU DAN 3D
-// ======================================
+// ==================================
+// SISTEM FOTO PNG
+// ==================================
 
-// Crop lebih lebar dibanding sebelumnya:
-// wajah tetap menjadi fokus, tetapi bahu
-// dan bagian tubuh atas masih terlihat.
+// Foto digunakan pada kartu jawaban
+// sekaligus pada gerbang 3D.
+
 function cropFace(img,h,w=512,height=512){
  const canvas=document.createElement("canvas");
  canvas.width=w;
@@ -575,8 +566,8 @@ function cropFace(img,h,w=512,height=512){
 
  const targetRatio=w/height;
  const sourceRatio=iw/ih;
-
  let sw,sh;
+
  if(sourceRatio>targetRatio){
   sh=ih;
   sw=sh*targetRatio;
@@ -585,7 +576,6 @@ function cropFace(img,h,w=512,height=512){
   sh=sw/targetRatio;
  }
 
- // Menggeser frame ke wajah tanpa keluar gambar.
  const sx=Math.max(0,Math.min(
   iw-sw,focus.x*iw-sw/2
  ));
@@ -601,12 +591,7 @@ function cropFace(img,h,w=512,height=512){
  return canvas;
 }
 
-function photoFallback(h){
- return "https://drive.google.com/thumbnail?id="+
-  encodeURIComponent(PHOTO_IDS[h])+"&sz=w500";
-}
-
-function setPhoto(h,url,fromServer){
+function setPhoto(h,url){
  if(photoStates[h]==="ok")return;
 
  const img=new Image();
@@ -615,8 +600,6 @@ function setPhoto(h,url,fromServer){
   if(photoStates[h]==="ok")return;
 
   try{
-   // Foto kartu jawaban: rasio 4:3.
-   // Foto gerbang: rasio panel 2.8:3.3.
    const cardCanvas=cropFace(img,h,480,360);
    const gateCanvas=cropFace(img,h,448,528);
 
@@ -632,13 +615,12 @@ function setPhoto(h,url,fromServer){
    photoStates[h]="ok";
    photoLoaded++;
 
-   $("photoCount").textContent=
-    "FOTO "+photoLoaded+"/5";
-   $("loading").textContent=
-    "Foto siap: "+photoLoaded+"/5";
+   $("photoCount").textContent="FOTO "+photoLoaded+"/5";
+   $("loading").textContent="Foto siap: "+photoLoaded+"/5";
 
    applyPhotoTexture();
    refreshAnswers();
+
   }catch(e){
    console.error("Foto "+h,e);
    photoStates[h]="error";
@@ -647,44 +629,31 @@ function setPhoto(h,url,fromServer){
  };
 
  img.onerror=()=>{
-  if(fromServer){
-   setPhoto(h,photoFallback(h),false);
-  }else{
-   photoStates[h]="error";
-   $("loading").textContent=
-    "Ada foto gagal. Periksa izin Google Drive.";
-   refreshAnswers();
-  }
+  photoStates[h]="error";
+  console.warn("Foto gagal:",url);
+
+  $("loading").textContent=
+   "Foto "+h+" gagal. Periksa file PNG di GitHub.";
+
+  refreshAnswers();
  };
+
  img.src=url;
 }
 
+// Membaca lima file PNG dari GitHub Pages
 function initPhotos(){
  LETTERS.forEach(h=>{
   photoStates[h]="loading";
-
-  if(window.google&&google.script&&google.script.run){
-   google.script.run
-    .withSuccessHandler(result=>{
-     if(result&&result.success&&result.data)
-      setPhoto(h,result.data,true);
-     else
-      setPhoto(h,photoFallback(h),false);
-    })
-    .withFailureHandler(error=>{
-     console.error("Drive "+h,error);
-     setPhoto(h,photoFallback(h),false);
-    })
-    .getGamePhoto(h);
-  }else{
-   setPhoto(h,photoFallback(h),false);
-  }
+  setPhoto(h,PHOTO_FILES[h]);
  });
 }
 
+// Memasang foto ke panel 3D
 function applyTexturesToGroup(group){
  group.traverse(mesh=>{
   if(!mesh.isMesh)return;
+
   const h=mesh.userData.letter;
   if(!h||!photoTextures[h])return;
 
@@ -698,20 +667,23 @@ function applyTexturesToGroup(group){
    side:THREE.DoubleSide,
    depthWrite:true
   });
+
   if(old)old.dispose();
  });
 }
 
 function applyPhotoTexture(){
  gameObjects.forEach(obj=>{
-  if(obj.type==="gate")
+  if(obj.type==="gate"){
    applyTexturesToGroup(obj.group);
+  }
  });
 }
 
-// ======================================
-// RINTANGAN, KOIN DAN GERBANG
-// ======================================
+// ==================================
+// RINTANGAN
+// ==================================
+
 function createObstacle(kind,laneIndex,world){
  const g=new THREE.Group();
  const red=mat(0xff234c,0xff0033,.65);
@@ -719,11 +691,15 @@ function createObstacle(kind,laneIndex,world){
 
  if(kind==="low"){
   addBox(g,2.85,1.35,.8,red,0,.7,0);
+
   for(let i=0;i<3;i++){
-   const stripe=addBox(g,.35,1.45,.86,
-    yellow,-.9+i*.9,.7,0);
+   const stripe=addBox(
+    g,.35,1.45,.86,yellow,
+    -.9+i*.9,.7,0
+   );
    stripe.rotation.z=.32;
   }
+
  }else{
   addBox(g,.28,4,.6,red,-1.5,2,0);
   addBox(g,.28,4,.6,red,1.5,2,0);
@@ -733,23 +709,40 @@ function createObstacle(kind,laneIndex,world){
 
  g.position.x=LANE_X[laneIndex];
  scene.add(g);
- return {type:"obstacle",kind,lane:laneIndex,
-  world,group:g,hit:false};
+
+ return {
+  type:"obstacle",kind,
+  lane:laneIndex,world,group:g,hit:false
+ };
 }
+
+// ==================================
+// KOIN EMAS
+// ==================================
 
 function createCoin(laneIndex,world){
  const g=new THREE.Group();
  const gold=mat(0xffd11c,0xffb300,.8);
+
  const coin=new THREE.Mesh(
-  new THREE.TorusGeometry(.58,.19,10,20),gold
+  new THREE.TorusGeometry(.58,.19,10,20),
+  gold
  );
+
  coin.rotation.y=Math.PI/2;
  coin.position.y=1.6;
  g.add(coin);
  scene.add(g);
- return {type:"coin",lane:laneIndex,
-  world,group:g,coin,hit:false};
+
+ return {
+  type:"coin",lane:laneIndex,
+  world,group:g,coin,hit:false
+ };
 }
+
+// ==================================
+// GERBANG FOTO A B C D E
+// ==================================
 
 function createGate(index,world){
  const group=new THREE.Group();
@@ -762,12 +755,16 @@ function createGate(index,world){
   gate.position.x=LANE_X[i];
 
   addBox(gate,.2,6,.5,
-   i%2===0?cyan:pink,-1.75,3,0);
+   i%2===0?cyan:pink,-1.75,3,0
+  );
+
   addBox(gate,.2,6,.5,
-   i%2===0?cyan:pink,1.75,3,0);
+   i%2===0?cyan:pink,1.75,3,0
+  );
+
   addBox(gate,3.7,.25,.5,cyan,0,6,0);
 
-  // Foto portrait gerbang
+  // Panel foto portrait
   const panel=new THREE.Mesh(
    new THREE.PlaneGeometry(2.8,3.3),
    new THREE.MeshBasicMaterial({
@@ -775,12 +772,16 @@ function createGate(index,world){
     side:THREE.DoubleSide
    })
   );
+
   panel.position.set(0,3.65,.25);
   panel.userData.letter=h;
   gate.add(panel);
 
+  // Huruf jawaban
   const c=document.createElement("canvas");
-  c.width=256;c.height=128;
+  c.width=256;
+  c.height=128;
+
   const cx=c.getContext("2d");
   cx.fillStyle="#091831";
   cx.fillRect(0,0,256,128);
@@ -793,9 +794,11 @@ function createGate(index,world){
    new THREE.PlaneGeometry(2.1,1),
    new THREE.MeshBasicMaterial({
     map:new THREE.CanvasTexture(c),
-    transparent:true,side:THREE.DoubleSide
+    transparent:true,
+    side:THREE.DoubleSide
    })
   );
+
   label.position.set(0,1.35,.3);
   gate.add(label);
   group.add(gate);
@@ -803,22 +806,33 @@ function createGate(index,world){
 
  scene.add(group);
  applyTexturesToGroup(group);
- return {type:"gate",index,world,group,hit:false};
+
+ return {
+  type:"gate",index,world,group,hit:false
+ };
 }
+
+// ==================================
+// SUSUNAN TREK PANJANG
+// ==================================
 
 function createGameObjects(){
  for(const obj of gameObjects){
   scene.remove(obj.group);
+
   obj.group.traverse(child=>{
    if(!child.isMesh)return;
    if(child.geometry)child.geometry.dispose();
+
    const materials=Array.isArray(child.material)
     ?child.material:[child.material];
+
    materials.forEach(m=>{
     if(!m)return;
     if(m.map &&
-       !Object.values(photoTextures).includes(m.map))
-      m.map.dispose();
+       !Object.values(photoTextures).includes(m.map)){
+     m.map.dispose();
+    }
     m.dispose();
    });
   });
@@ -832,15 +846,18 @@ function createGameObjects(){
   gameObjects.push(createCoin(i%5,base+180));
   gameObjects.push(createCoin((i+1)%5,base+350));
   gameObjects.push(createObstacle(
-   "low",(i*2+1)%5,base+520));
+   "low",(i*2+1)%5,base+520
+  ));
   gameObjects.push(createCoin((i+2)%5,base+690));
   gameObjects.push(createCoin((i+3)%5,base+850));
   gameObjects.push(createObstacle(
-   "high",(i*3+3)%5,base+1020));
+   "high",(i*3+3)%5,base+1020
+  ));
   gameObjects.push(createCoin((i+4)%5,base+1190));
   gameObjects.push(createCoin((i+1)%5,base+1360));
   gameObjects.push(createGate(i,base+GATE_DIST));
  }
+
  updateObjects();
 }
 
@@ -852,9 +869,10 @@ function updateObjects(){
  }
 }
 
-// ======================================
-// GAMEPLAY
-// ======================================
+// ==================================
+// HUD, SKOR DAN GAMEPLAY
+// ==================================
+
 function updateHUD(){
  $("score").textContent="⭐ "+score;
  $("level").textContent="SOAL "+answered+"/10";
@@ -865,17 +883,27 @@ function updateDistance(){
   $("distance").textContent="SELESAI";
   return;
  }
+
  const d=Math.max(0,Math.ceil(
   answered*STEP+GATE_DIST-progress
  ));
+
  $("distance").textContent=
   "GERBANG "+(answered+1)+": "+d+" unit";
 }
 
 function resetGame(){
- lane=2;score=0;answered=0;progress=0;
- jumpTime=0;duckTime=0;robotSize=1;gameTime=0;
- lastQuiz=-1;lastLane=-1;messageTime=0;
+ lane=2;
+ score=0;
+ answered=0;
+ progress=0;
+ jumpTime=0;
+ duckTime=0;
+ robotSize=1;
+ gameTime=0;
+ lastQuiz=-1;
+ lastLane=-1;
+ messageTime=0;
 
  robot.scale.setScalar(1);
  robot.position.set(0,0,PLAYER_Z);
@@ -891,6 +919,7 @@ function resetGame(){
  $("endScreen").style.display="none";
  $("quiz").style.display="none";
  $("msg").style.display="none";
+
  state="playing";
 }
 
@@ -899,23 +928,36 @@ function move(dir){
  lane=Math.max(0,Math.min(4,lane+dir));
  refreshAnswers();
 }
+
 function jump(){
  if(state!=="playing")return;
- if(jumpTime===0&&duckTime===0)jumpTime=1.2;
+ if(jumpTime===0&&duckTime===0){
+  jumpTime=1.2;
+ }
 }
+
 function duck(){
  if(state!=="playing")return;
- if(duckTime===0&&jumpTime===0)duckTime=1.15;
+ if(duckTime===0&&jumpTime===0){
+  duckTime=1.15;
+ }
 }
 
 function currentQuiz(){
  if(answered>=QUESTIONS.length)return -1;
+
  const d=answered*STEP+GATE_DIST-progress;
- return d<QUESTION_DISTANCE&&d>=-10?answered:-1;
+ return d<QUESTION_DISTANCE&&d>=-10
+  ?answered:-1;
 }
+
+// ==================================
+// PILIHAN JAWABAN DENGAN FOTO
+// ==================================
 
 function refreshAnswers(){
  const qi=currentQuiz();
+
  if(qi<0||state!=="playing"){
   $("quiz").style.display="none";
   return;
@@ -925,21 +967,24 @@ function refreshAnswers(){
  $("question").textContent=
   "SOAL "+(qi+1)+": "+QUESTIONS[qi].q;
 
- $("answers").innerHTML=QUESTIONS[qi].a.map((a,i)=>{
-  const h=LETTERS[i];
-  const photo=photos[h]
-   ?`<img src="${photos[h]}" alt="Foto ${h}">`
-   :`<div class="placeholder">${
-     photoStates[h]==="error"?"Foto gagal":"Memuat..."
-    }</div>`;
+ $("answers").innerHTML=
+  QUESTIONS[qi].a.map((a,i)=>{
+   const h=LETTERS[i];
 
-  return `<button class="answer ${lane===i?"selected":""}"
-   data-i="${i}">
-   <b>${h}</b>
-   <div class="faceFrame">${photo}</div>
-   <span class="choice">${a}</span>
-  </button>`;
- }).join("");
+   const photo=photos[h]
+    ?`<img src="${photos[h]}" alt="Foto ${h}">`
+    :`<div class="placeholder">${
+      photoStates[h]==="error"?"Foto gagal":"Memuat..."
+     }</div>`;
+
+   return `
+   <button class="answer ${lane===i?"selected":""}"
+    data-i="${i}">
+    <b>${h}</b>
+    <div class="faceFrame">${photo}</div>
+    <span class="choice">${a}</span>
+   </button>`;
+  }).join("");
 
  $("answers").querySelectorAll("button").forEach(b=>{
   b.onclick=()=>{
@@ -955,14 +1000,21 @@ function message(text){
  messageTime=1.4;
 }
 
+// ==================================
+// GAME OVER DAN MENANG
+// ==================================
+
 function gameOver(){
  if(state!=="playing")return;
+
  state="dead";
  $("quiz").style.display="none";
  $("endTitle").textContent="💀 GAME OVER";
  $("endInfo").innerHTML=
   "Robot menabrak rintangan!<br><br>"+
-  "Skor: "+score+"<br>Soal selesai: "+answered+"/10";
+  "Skor: "+score+
+  "<br>Soal selesai: "+answered+"/10";
+
  $("endScreen").style.display="flex";
  crashSound();
 }
@@ -974,6 +1026,7 @@ function finish(){
  $("endInfo").innerHTML=
   "Selamat! 10 soal PLTU berhasil dilewati."+
   "<br>Skor akhir: "+score;
+
  $("endScreen").style.display="flex";
  winSound();
 }
@@ -981,6 +1034,7 @@ function finish(){
 function resolveGate(obj){
  if(obj.hit)return;
  obj.hit=true;
+
  const q=QUESTIONS[obj.index];
  answered++;
 
@@ -995,10 +1049,18 @@ function resolveGate(obj){
   message("❌ SALAH! Jawaban "+LETTERS[q.c]);
   wrongSound();
  }
+
  updateHUD();
  lastQuiz=-1;
- if(answered>=QUESTIONS.length)finish();
+
+ if(answered>=QUESTIONS.length){
+  finish();
+ }
 }
+
+// ==================================
+// UPDATE PERMAINAN
+// ==================================
 
 function updateGame(dt){
  if(state!=="playing")return;
@@ -1014,39 +1076,53 @@ function updateGame(dt){
  jumpTime=Math.max(0,jumpTime-dt);
  duckTime=Math.max(0,duckTime-dt);
 
- robot.position.x+=(LANE_X[lane]-robot.position.x)*
+ robot.position.x+=
+  (LANE_X[lane]-robot.position.x)*
   Math.min(1,dt*12);
 
  robot.position.y=jumpTime>0
-  ?Math.sin(Math.PI*(1-jumpTime/1.2))*3.4:0;
+  ?Math.sin(Math.PI*(1-jumpTime/1.2))*3.4
+  :0;
 
  const crouch=duckTime>0;
- body.scale.y+=((crouch?.48:1)-body.scale.y)*
+
+ body.scale.y+=
+  ((crouch?.48:1)-body.scale.y)*
   Math.min(1,dt*20);
- head.position.y+=((crouch?2.25:3.35)-head.position.y)*
+
+ head.position.y+=
+  ((crouch?2.25:3.35)-head.position.y)*
   Math.min(1,dt*20);
+
  robot.scale.setScalar(robotSize);
 
  const run=Math.sin(gameTime*11);
  leftLeg.rotation.x=run*.43;
  rightLeg.rotation.x=-run*.43;
+
  robot.userData.arms.forEach((arm,i)=>{
   arm.rotation.x=run*(i===0?-.38:.38);
  });
 
- camera.position.x+=(robot.position.x*.2-camera.position.x)*
+ camera.position.x+=
+  (robot.position.x*.2-camera.position.x)*
   Math.min(1,dt*2);
+
  camera.lookAt(camera.position.x*.25,3,-35);
 
  for(const obj of gameObjects){
   if(obj.hit)continue;
 
   if(obj.world>before&&obj.world<=progress){
+
    if(obj.type==="obstacle"){
     obj.hit=true;
+
     if(obj.lane===lane){
      const jumpPhase=oldJump>0
-      ?Math.sin(Math.PI*(1-oldJump/1.2)):0;
+      ?Math.sin(Math.PI*(1-oldJump/1.2))
+      :0;
+
      const safe=obj.kind==="low"
       ?jumpPhase>.4
       :(oldDuck>0||duckTime>0);
@@ -1055,65 +1131,86 @@ function updateGame(dt){
       gameOver();
       break;
      }
+
      score+=10;
      updateHUD();
     }
+
    }else if(obj.type==="coin"){
     obj.hit=true;
+
     if(obj.lane===lane){
      score+=20;
      robotSize=Math.min(1.55,robotSize+.012);
      updateHUD();
      coinSound();
     }
+
    }else if(obj.type==="gate"){
     resolveGate(obj);
     if(state!=="playing")break;
    }
   }
-  if(obj.type==="coin")
+
+  if(obj.type==="coin"){
    obj.coin.rotation.y+=dt*3;
+  }
  }
 
  updateObjects();
  updateDistance();
 
  const qi=currentQuiz();
+
  if(qi!==lastQuiz||lane!==lastLane){
-  lastQuiz=qi;lastLane=lane;
+  lastQuiz=qi;
+  lastLane=lane;
   refreshAnswers();
  }
+
  if(messageTime>0){
   messageTime-=dt;
-  if(messageTime<=0)$("msg").style.display="none";
+
+  if(messageTime<=0){
+   $("msg").style.display="none";
+  }
  }
 }
 
-// ======================================
-// ANIMASI DUNIA
-// ======================================
+// ==================================
+// ANIMASI 3D
+// ==================================
+
 function animate(){
  if(!renderer)return;
+
  const dt=Math.min(clock.getDelta(),.05);
 
  if(state==="playing"){
   updateGame(dt);
 
   const delta=SPEED*Z_FACTOR*dt;
+
   for(const line of roadLines){
    line.position.z+=delta;
-   if(line.position.z>20)line.position.z-=253;
+   if(line.position.z>20){
+    line.position.z-=253;
+   }
   }
+
   for(const building of city){
    building.position.z+=delta;
-   if(building.position.z>35)
+
+   if(building.position.z>35){
     building.position.z-=330;
+   }
   }
  }
 
  for(const m of meteors){
   m.position.x-=dt*9;
   m.position.y-=dt*15;
+
   if(m.position.y<3){
    m.position.set(
     -5+Math.random()*90,
@@ -1122,12 +1219,13 @@ function animate(){
    );
   }
  }
+
  renderer.render(scene,camera);
 }
 
-// ======================================
-// MUSIK EDM 150 BPM - BASS & DRUM KUAT
-// ======================================
+// ==================================
+// MUSIK EDM 150 BPM
+// ==================================
 
 let audio=null;
 let masterGain=null;
@@ -1140,17 +1238,15 @@ let volumeLevel=.85;
 const BPM=150;
 const STEP_TIME=60/BPM/4;
 
-// Audio dibuat pada interaksi pengguna,
-// sesuai aturan autoplay browser.
 function initAudio(){
  try{
   if(!audio){
    const AC=window.AudioContext||
     window.webkitAudioContext;
+
    if(!AC)return;
 
    audio=new AC();
-
    masterGain=audio.createGain();
    compressor=audio.createDynamicsCompressor();
 
@@ -1164,10 +1260,12 @@ function initAudio(){
    compressor.connect(audio.destination);
   }
 
-  if(audio.state==="suspended")
+  if(audio.state==="suspended"){
    audio.resume();
+  }
 
   updateVolume();
+
  }catch(e){
   console.warn("Audio:",e);
  }
@@ -1175,15 +1273,20 @@ function initAudio(){
 
 function updateVolume(){
  if(!audio||!masterGain)return;
+
  const v=muted?0:volumeLevel;
+
  masterGain.gain.setTargetAtTime(
   v,audio.currentTime,.015
  );
- $("muteBtn").textContent=muted||v===0?"🔇":"🔊";
+
+ $("muteBtn").textContent=
+  muted||v===0?"🔇":"🔊";
 }
 
 function tone(frequency,duration,type="sawtooth",
  volume=.15,when=null){
+
  if(!audio)return;
 
  const t=when===null?audio.currentTime:when;
@@ -1205,18 +1308,22 @@ function tone(frequency,duration,type="sawtooth",
  osc.stop(t+duration+.02);
 }
 
-// Bass drum dengan penurunan frekuensi
 function kick(t){
  if(!audio)return;
+
  const o=audio.createOscillator();
  const g=audio.createGain();
 
  o.type="sine";
  o.frequency.setValueAtTime(165,t);
- o.frequency.exponentialRampToValueAtTime(43,t+.16);
+ o.frequency.exponentialRampToValueAtTime(
+  43,t+.16
+ );
 
  g.gain.setValueAtTime(.75,t);
- g.gain.exponentialRampToValueAtTime(.001,t+.25);
+ g.gain.exponentialRampToValueAtTime(
+  .001,t+.25
+ );
 
  o.connect(g);
  g.connect(masterGain);
@@ -1224,19 +1331,22 @@ function kick(t){
  o.stop(t+.26);
 }
 
-// Noise untuk snare dan hi-hat
 let noiseBuffer=null;
 
 function getNoise(){
  if(noiseBuffer)return noiseBuffer;
 
  const length=audio.sampleRate;
- noiseBuffer=audio.createBuffer(1,length,audio.sampleRate);
+ noiseBuffer=audio.createBuffer(
+  1,length,audio.sampleRate
+ );
+
  const data=noiseBuffer.getChannelData(0);
 
  for(let i=0;i<length;i++){
   data[i]=Math.random()*2-1;
  }
+
  return noiseBuffer;
 }
 
@@ -1271,14 +1381,19 @@ function snare(t){
 
 function hat(t,open=false){
  noiseHit(
-  t,open?.14:.045,
+  t,
+  open?.14:.045,
   open?.08:.055,
   6500
  );
 }
 
 function bass(t,step){
- const notes=[55,55,65.41,73.42,55,82.41,65.41,49];
+ const notes=[
+  55,55,65.41,73.42,
+  55,82.41,65.41,49
+ ];
+
  const f=notes[Math.floor(step/2)%8];
 
  tone(f,.18,"sawtooth",.14,t);
@@ -1290,36 +1405,32 @@ function lead(t,step){
   440,523.25,659.25,587.33,
   523.25,659.25,783.99,659.25
  ];
- tone(notes[Math.floor(step/2)%8],
-  .11,"square",.035,t);
+
+ tone(
+  notes[Math.floor(step/2)%8],
+  .11,"square",.035,t
+ );
 }
 
-// Jadwal beat dengan waktu AudioContext
 let nextBeatTime=0;
+
 function scheduleBeat(step,t){
  const s=step%16;
 
- // Four-on-the-floor kick
  if(s%4===0)kick(t);
-
- // Snare pada beat 2 dan 4
  if(s===4||s===12)snare(t);
-
- // Hi-hat setiap 1/8 beat
  if(s%2===0)hat(t,s%4===2);
 
- // Hi-hat ekstra untuk ritme cepat
- if(s===3||s===7||s===11||s===15)
+ if(s===3||s===7||s===11||s===15){
   hat(t,false);
+ }
 
- // Bass synth
  if(s%2===0)bass(t,step);
-
- // Melodi synth pendek
  if(s%2===1)lead(t,step);
 
- // Clap tambahan setiap 4 bar kecil
- if(s===12)noiseHit(t,.12,.10,1800);
+ if(s===12){
+  noiseHit(t,.12,.10,1800);
+ }
 }
 
 function startMusic(){
@@ -1350,43 +1461,63 @@ function stopMusic(){
 function coinSound(){
  tone(1050,.10,"sine",.10);
 }
+
 function correctSound(){
  tone(660,.13,"sine",.15);
- if(audio)tone(990,.16,"sine",.14,
-  audio.currentTime+.11);
+
+ if(audio){
+  tone(990,.16,"sine",.14,
+   audio.currentTime+.11
+  );
+ }
 }
+
 function wrongSound(){
  tone(175,.32,"sawtooth",.17);
 }
+
 function crashSound(){
  stopMusic();
  tone(80,.65,"sawtooth",.35);
 }
+
 function winSound(){
  stopMusic();
  if(!audio)return;
+
  [523,659,784,1046].forEach((f,i)=>{
   tone(f,.30,"sine",.20,
-   audio.currentTime+i*.16);
+   audio.currentTime+i*.16
+  );
  });
 }
 
-// Volume dan mute
+// ==================================
+// VOLUME
+// ==================================
+
 $("volume").addEventListener("input",e=>{
  volumeLevel=Number(e.target.value)/100;
- if(volumeLevel>0)muted=false;
+
+ if(volumeLevel>0){
+  muted=false;
+ }
+
  updateVolume();
 });
+
 $("muteBtn").addEventListener("click",()=>{
  muted=!muted;
  updateVolume();
 });
 
-// ======================================
-// MULAI DAN KONTROL
-// ======================================
+// ==================================
+// MULAI GAME
+// ==================================
+
 function start(){
  if(!renderer)return;
+
  initAudio();
  stopMusic();
  resetGame();
@@ -1396,25 +1527,44 @@ function start(){
 $("startBtn").onclick=start;
 $("restartBtn").onclick=start;
 
+// ==================================
+// KONTROL HP
+// ==================================
+
 $("left").onpointerdown=e=>{
- e.preventDefault();move(-1);
+ e.preventDefault();
+ move(-1);
 };
+
 $("right").onpointerdown=e=>{
- e.preventDefault();move(1);
+ e.preventDefault();
+ move(1);
 };
+
 $("jump").onpointerdown=e=>{
- e.preventDefault();jump();
+ e.preventDefault();
+ jump();
 };
+
 $("duck").onpointerdown=e=>{
- e.preventDefault();duck();
+ e.preventDefault();
+ duck();
 };
+
+// ==================================
+// KONTROL KEYBOARD
+// ==================================
 
 addEventListener("keydown",e=>{
- if(["ArrowLeft","ArrowRight",
-  "ArrowUp","ArrowDown"," "].includes(e.key))
+ if([
+  "ArrowLeft","ArrowRight",
+  "ArrowUp","ArrowDown"," "
+ ].includes(e.key)){
   e.preventDefault();
+ }
 
  if(e.repeat)return;
+
  if(e.key==="ArrowLeft"||e.key==="a")move(-1);
  if(e.key==="ArrowRight"||e.key==="d")move(1);
  if(e.key==="ArrowUp"||e.key===" ")jump();
@@ -1426,27 +1576,43 @@ addEventListener("keydown",e=>{
  }
 });
 
+// ==================================
+// SWIPE HP
+// ==================================
+
 let sx=0,sy=0;
+
 $("scene").addEventListener("touchstart",e=>{
  if(!e.touches.length)return;
+
  sx=e.touches[0].clientX;
  sy=e.touches[0].clientY;
 },{passive:true});
 
 $("scene").addEventListener("touchend",e=>{
  if(!e.changedTouches.length)return;
+
  const dx=e.changedTouches[0].clientX-sx;
  const dy=e.changedTouches[0].clientY-sy;
 
  if(Math.max(Math.abs(dx),Math.abs(dy))<25)return;
- if(Math.abs(dx)>Math.abs(dy))move(dx>0?1:-1);
- else if(dy<0)jump();
- else duck();
+
+ if(Math.abs(dx)>Math.abs(dy)){
+  move(dx>0?1:-1);
+ }else if(dy<0){
+  jump();
+ }else{
+  duck();
+ }
 },{passive:true});
 
-// Jalankan game
+// ==================================
+// JALANKAN GAME
+// ==================================
+
 setup3D();
 initPhotos();
+
 </script>
 </body>
 </html>
