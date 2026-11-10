@@ -3,120 +3,219 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>PLTU NEON RUN - Meteor City 3D</title>
+<meta name="viewport"
+ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PLTU Neon Run - Meteor City 3D</title>
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#030516;color:white;font-family:Arial,sans-serif;touch-action:none}
+html,body{
+ margin:0;width:100%;height:100%;
+ overflow:hidden;background:#030516;color:white;
+ font-family:Arial,sans-serif;touch-action:none
+}
 #scene{position:fixed;inset:0;width:100%;height:100%}
-#hud{position:absolute;top:8px;left:8px;right:8px;z-index:5;display:flex;justify-content:space-between;gap:4px;pointer-events:none}
-.stat{background:#06152cdd;border:1px solid #00eaff;border-radius:10px;padding:7px;font-size:12px;font-weight:bold}
-#quiz{position:absolute;z-index:6;top:48px;left:50%;transform:translateX(-50%);width:min(99%,850px);padding:6px;border:2px solid #00eaff;border-radius:14px;background:#05112bf2;text-align:center;display:none}
-#question{font-size:clamp(12px,2.4vw,19px);font-weight:bold;margin-bottom:8px}
-#answers{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
-.answer{min-width:0;padding:4px 2px;background:#122448;color:white;border:2px solid #345c8c;border-radius:8px;cursor:pointer}
-.answer.selected{border-color:#ffdf38;background:#33405e;box-shadow:0 0 14px #ffdf38}
-.answer b{display:block;color:#ffe55b;font-size:16px}
-.faceFrame{width:100%;height:clamp(68px,12vh,120px);overflow:hidden;border-radius:5px;background:#192b4f}
-.faceFrame img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 23%}
-.answer .choice{display:block;font-size:clamp(9px,1.6vw,12px);overflow-wrap:anywhere;margin-top:3px}
-.placeholder{height:100%;display:grid;place-items:center;font-size:10px;color:#aadaff}
-#controls{position:absolute;z-index:7;bottom:12px;left:12px;right:12px;display:flex;justify-content:space-between;pointer-events:none}
+#hud{
+ position:absolute;top:8px;left:8px;right:8px;
+ z-index:5;display:flex;justify-content:space-between;
+ gap:4px;pointer-events:none
+}
+.stat{
+ background:#06152cdd;border:1px solid #00eaff;
+ border-radius:10px;padding:7px;
+ font-size:12px;font-weight:bold
+}
+#quiz{
+ position:absolute;z-index:6;top:48px;left:50%;
+ transform:translateX(-50%);
+ width:min(99%,850px);padding:6px;
+ border:2px solid #00eaff;border-radius:14px;
+ background:#05112bf2;text-align:center;display:none
+}
+#question{
+ font-size:clamp(12px,2.4vw,19px);
+ font-weight:bold;margin-bottom:8px
+}
+#answers{
+ display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+ gap:5px
+}
+.answer{
+ min-width:0;padding:4px 2px;
+ background:#122448;color:white;
+ border:2px solid #345c8c;border-radius:8px;
+ cursor:pointer
+}
+.answer.selected{
+ border-color:#ffdf38;background:#33405e;
+ box-shadow:0 0 14px #ffdf38
+}
+.answer b{
+ display:block;color:#ffe55b;font-size:16px
+}
+.faceFrame{
+ width:100%;height:clamp(68px,12vh,120px);
+ overflow:hidden;border-radius:5px;background:#192b4f
+}
+.faceFrame img{
+ display:block;width:100%;height:100%;
+ object-fit:cover;object-position:center 23%
+}
+.answer .choice{
+ display:block;font-size:clamp(9px,1.6vw,12px);
+ overflow-wrap:anywhere;margin-top:3px
+}
+.placeholder{
+ height:100%;display:grid;place-items:center;
+ font-size:10px;color:#aadaff
+}
+#controls{
+ position:absolute;z-index:7;bottom:12px;
+ left:12px;right:12px;display:flex;
+ justify-content:space-between;pointer-events:none
+}
 .group{display:flex;gap:8px}
-.ctrl{pointer-events:auto;width:62px;height:60px;background:#071c40cc;color:white;font-size:26px;font-weight:bold;border:2px solid cyan;border-radius:15px;touch-action:none}
+.ctrl{
+ pointer-events:auto;width:62px;height:60px;
+ background:#071c40cc;color:white;font-size:26px;
+ font-weight:bold;border:2px solid cyan;
+ border-radius:15px;touch-action:none
+}
 .ctrl:active{background:#167eaf}
-.overlay{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:16px;text-align:center;background:#01051bea}
-.panel{width:min(95%,480px);padding:22px;border:2px solid cyan;border-radius:22px;background:linear-gradient(145deg,#142e5b,#090b25);box-shadow:0 0 40px #00bfff55}
-.panel h1{font-size:29px;color:#00eeff;text-shadow:0 0 16px cyan}
+.overlay{
+ position:absolute;inset:0;z-index:10;
+ display:flex;align-items:center;justify-content:center;
+ padding:16px;text-align:center;background:#01051bea
+}
+.panel{
+ width:min(95%,480px);padding:22px;
+ border:2px solid cyan;border-radius:22px;
+ background:linear-gradient(145deg,#142e5b,#090b25);
+ box-shadow:0 0 40px #00bfff55
+}
+.panel h1{
+ font-size:29px;color:#00eeff;
+ text-shadow:0 0 16px cyan
+}
 .panel p{line-height:1.5}
-.btn{border:0;border-radius:14px;padding:14px 27px;font-size:18px;font-weight:bold;color:#00152b;background:linear-gradient(90deg,#00edff,#bc68ff);cursor:pointer}
+.btn{
+ border:0;border-radius:14px;padding:14px 27px;
+ font-size:18px;font-weight:bold;color:#00152b;
+ background:linear-gradient(90deg,#00edff,#bc68ff);
+ cursor:pointer
+}
 .btn:disabled{opacity:.5}
 #loading{font-size:12px;color:#ffe783}
-#msg{position:absolute;z-index:8;top:48%;left:50%;transform:translate(-50%,-50%);background:#031b36eb;border:1px solid cyan;padding:16px;border-radius:12px;font-size:20px;font-weight:bold;display:none;text-align:center;pointer-events:none}
-#distance{position:absolute;right:10px;bottom:84px;z-index:5;background:#06152cbb;border:1px solid #00bfff;border-radius:9px;padding:8px;font-size:12px;pointer-events:none}
-#soundPanel{position:absolute;z-index:6;top:49px;right:9px;display:flex;gap:6px;align-items:center;border:1px solid #24ddff;border-radius:9px;background:#06152cdd;padding:5px}
-#muteBtn{border:0;background:transparent;color:white;font-size:18px;cursor:pointer}
+#msg{
+ position:absolute;z-index:8;top:48%;left:50%;
+ transform:translate(-50%,-50%);
+ background:#031b36eb;border:1px solid cyan;
+ padding:16px;border-radius:12px;
+ font-size:20px;font-weight:bold;
+ display:none;text-align:center;pointer-events:none
+}
+#distance{
+ position:absolute;right:10px;bottom:84px;z-index:5;
+ background:#06152cbb;border:1px solid #00bfff;
+ border-radius:9px;padding:8px;font-size:12px;
+ pointer-events:none
+}
+#soundPanel{
+ position:absolute;z-index:6;top:49px;right:9px;
+ display:flex;gap:6px;align-items:center;
+ border:1px solid #24ddff;border-radius:9px;
+ background:#06152cdd;padding:5px
+}
+#muteBtn{
+ border:0;background:transparent;
+ color:white;font-size:18px;cursor:pointer
+}
 #volume{width:95px;accent-color:#00eaff}
 @media(max-width:500px){
-.stat{font-size:10px;padding:6px}
-#quiz{top:48px;width:99%;padding:5px}
-#question{font-size:12px}
-.faceFrame{height:69px}
-.answer .choice{font-size:9px}
-.ctrl{width:56px;height:55px}
-.panel h1{font-size:24px}
-#distance{bottom:77px}
-#soundPanel{top:auto;bottom:76px;left:9px;right:auto}
-#volume{width:65px}
+ .stat{font-size:10px;padding:6px}
+ #quiz{top:48px;width:99%;padding:5px}
+ #question{font-size:12px}
+ .faceFrame{height:69px}
+ .answer .choice{font-size:9px}
+ .ctrl{width:56px;height:55px}
+ .panel h1{font-size:24px}
+ #distance{bottom:77px}
+ #soundPanel{
+  top:auto;bottom:76px;left:9px;right:auto
+ }
+ #volume{width:65px}
 }
 </style>
 </head>
-<body>
 
+<body>
 <canvas id="scene"></canvas>
 
 <div id="hud">
-<div class="stat" id="score">⭐ 0</div>
-<div class="stat" id="level">SOAL 0/10</div>
-<div class="stat" id="photoCount">FOTO 0/5</div>
+ <div class="stat" id="score">⭐ 0</div>
+ <div class="stat" id="level">SOAL 0/10</div>
+ <div class="stat" id="photoCount">FOTO 0/5</div>
 </div>
 
 <div id="soundPanel">
-<button id="muteBtn">🔊</button>
-<input id="volume" type="range" min="0" max="100" value="85">
+ <button id="muteBtn">🔊</button>
+ <input id="volume" type="range"
+  min="0" max="100" value="85">
 </div>
 
 <div id="quiz">
-<div id="question"></div>
-<div id="answers"></div>
-<div style="font-size:11px;color:#aceeff;margin-top:5px">
-Pilih jawaban dengan berpindah ke jalur A–E!
-</div>
+ <div id="question"></div>
+ <div id="answers"></div>
+ <div style="font-size:11px;color:#aceeff;margin-top:5px">
+  Pilih jawaban dengan berpindah ke jalur A–E!
+ </div>
 </div>
 
 <div id="msg"></div>
 <div id="distance">GERBANG: --</div>
 
 <div id="controls">
-<div class="group">
-<button class="ctrl" id="left">◀</button>
-<button class="ctrl" id="right">▶</button>
-</div>
-<div class="group">
-<button class="ctrl" id="jump">⬆</button>
-<button class="ctrl" id="duck">⬇</button>
-</div>
+ <div class="group">
+  <button class="ctrl" id="left">◀</button>
+  <button class="ctrl" id="right">▶</button>
+ </div>
+ <div class="group">
+  <button class="ctrl" id="jump">⬆</button>
+  <button class="ctrl" id="duck">⬇</button>
+ </div>
 </div>
 
 <div id="startScreen" class="overlay">
-<div class="panel">
-<h1>⚡ PLTU NEON RUN</h1>
-<h2>METEOR CITY 3D</h2>
-<p>Musik EDM • Trek Panjang • 10 Soal PLTU</p>
-<p>◀ ▶ Pindah Jalur<br>⬆ Lompat<br>⬇ Menunduk</p>
-<p style="color:#ff7777">
-<b>Menabrak rintangan = GAME OVER</b>
-</p>
-<p id="loading">Menyiapkan grafis dan foto...</p>
-<button id="startBtn" class="btn">▶ MULAI GAME</button>
-</div>
+ <div class="panel">
+  <h1>⚡ PLTU NEON RUN</h1>
+  <h2>METEOR CITY 3D</h2>
+  <p>Musik EDM • Trek Panjang • 10 Soal PLTU</p>
+  <p>◀ ▶ Pindah Jalur</p>
+  <p>⬆ Lompat melewati dinding bawah</p>
+  <p>⬇ Menunduk melewati palang atas</p>
+  <p style="color:#ff7777">
+   <b>RINTANGAN MENUTUP SEMUA 5 JALUR!</b>
+  </p>
+  <p id="loading">Menyiapkan grafis dan foto...</p>
+  <button id="startBtn" class="btn">▶ MULAI GAME</button>
+ </div>
 </div>
 
 <div id="endScreen" class="overlay" style="display:none">
-<div class="panel">
-<h1 id="endTitle">GAME OVER</h1>
-<p id="endInfo"></p>
-<button id="restartBtn" class="btn">↻ MAIN LAGI</button>
-</div>
+ <div class="panel">
+  <h1 id="endTitle">GAME OVER</h1>
+  <p id="endInfo"></p>
+  <button id="restartBtn" class="btn">↻ MAIN LAGI</button>
+ </div>
 </div>
 
 <script>
 "use strict";
 
-// ==================================
+// ==========================================
 // KONFIGURASI GAME
-// ==================================
+// ==========================================
 
 const $=id=>document.getElementById(id);
 const LETTERS=["A","B","C","D","E"];
@@ -130,9 +229,9 @@ const PLAYER_Z=10;
 const Z_FACTOR=.12;
 const LANE_X=[-8,-4,0,4,8];
 
-// ==================================
-// FOTO PNG LANGSUNG DARI GITHUB
-// ==================================
+// ==========================================
+// FOTO PESERTA DARI GITHUB
+// ==========================================
 
 const PHOTO_FILES={
  A:"./foto-a.png",
@@ -142,7 +241,6 @@ const PHOTO_FILES={
  E:"./foto-e.jpg"
 };
 
-// Posisi fokus wajah pada setiap foto
 const FACE_FOCUS={
  A:{x:.50,y:.24},
  B:{x:.50,y:.24},
@@ -151,9 +249,9 @@ const FACE_FOCUS={
  E:{x:.50,y:.25}
 };
 
-// ==================================
-// 10 SOAL PLTU
-// ==================================
+// ==========================================
+// SEPULUH SOAL TENTANG PLTU
+// ==========================================
 
 const QUESTIONS=[
  {q:"Apa kepanjangan PLTU?",a:[
@@ -227,9 +325,9 @@ const QUESTIONS=[
  "Melakukan isolasi energi dan LOTO"],c:4}
 ];
 
-// ==================================
-// VARIABEL GAME
-// ==================================
+// ==========================================
+// VARIABEL UTAMA GAME
+// ==========================================
 
 let scene,camera,renderer,clock;
 let robot,body,head,leftLeg,rightLeg;
@@ -245,14 +343,17 @@ let jumpTime=0,duckTime=0,robotSize=1;
 let state="menu",gameTime=0,messageTime=0;
 let lastQuiz=-1,lastLane=-1;
 
-// ==================================
-// MATERIAL DAN OBJEK 3D
-// ==================================
+// ==========================================
+// MATERIAL DAN BENTUK 3D
+// ==========================================
 
 function mat(color,emissive=0,intensity=0){
  return new THREE.MeshStandardMaterial({
-  color,metalness:.38,roughness:.37,
-  emissive,emissiveIntensity:intensity
+  color,
+  metalness:.38,
+  roughness:.37,
+  emissive,
+  emissiveIntensity:intensity
  });
 }
 
@@ -273,13 +374,14 @@ function addBox(parent,w,h,d,m,x,y,z){
  return mesh;
 }
 
-// ==================================
-// MEMBUAT DUNIA 3D
-// ==================================
+// ==========================================
+// SETUP DUNIA 3D
+// ==========================================
 
 function setup3D(){
  if(!window.THREE){
-  $("loading").textContent="Three.js gagal dimuat. Periksa internet.";
+  $("loading").textContent=
+   "Three.js gagal dimuat. Periksa internet.";
   $("startBtn").disabled=true;
   return;
  }
@@ -302,7 +404,9 @@ function setup3D(){
   });
 
   renderer.setSize(innerWidth,innerHeight);
-  renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.7));
+  renderer.setPixelRatio(
+   Math.min(devicePixelRatio||1,1.7)
+  );
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure=1.4;
@@ -311,15 +415,21 @@ function setup3D(){
    0x668aff,0x151128,2.3
   ));
 
-  const sun=new THREE.DirectionalLight(0xaad9ff,2);
+  const sun=new THREE.DirectionalLight(
+   0xaad9ff,2
+  );
   sun.position.set(12,25,15);
   scene.add(sun);
 
-  const pink=new THREE.PointLight(0xff28dd,90,75);
+  const pink=new THREE.PointLight(
+   0xff28dd,90,75
+  );
   pink.position.set(-13,10,-15);
   scene.add(pink);
 
-  const cyan=new THREE.PointLight(0x00eaff,95,75);
+  const cyan=new THREE.PointLight(
+   0x00eaff,95,75
+  );
   cyan.position.set(13,9,-23);
   scene.add(cyan);
 
@@ -337,30 +447,38 @@ function setup3D(){
   });
 
   renderer.setAnimationLoop(animate);
-  $("loading").textContent="Grafis siap. Memuat foto PNG...";
+
+  $("loading").textContent=
+   "Grafis 3D siap. Memuat foto...";
 
  }catch(e){
   console.error(e);
-  $("loading").textContent="Grafis gagal: "+e.message;
+  $("loading").textContent=
+   "Grafis gagal: "+e.message;
   $("startBtn").disabled=true;
  }
 }
 
-// ==================================
-// JALAN LIMA JALUR
-// ==================================
+// ==========================================
+// JALAN 5 JALUR
+// ==========================================
 
 function createRoad(){
- const ground=box(250,.3,550,mat(0x070b19));
+ const ground=box(
+  250,.3,550,mat(0x070b19)
+ );
  ground.position.set(0,-.24,-135);
  scene.add(ground);
 
- const road=box(20,.12,550,mat(0x14182b));
+ const road=box(
+  20,.12,550,mat(0x14182b)
+ );
  road.position.set(0,-.06,-135);
  scene.add(road);
 
  for(let i=0;i<=5;i++){
-  const rail=box(.09,.08,550,
+  const rail=box(
+   .09,.08,550,
    neon(i===0||i===5?0xff33eb:0x00baff)
   );
   rail.position.set(-10+i*4,.05,-135);
@@ -369,7 +487,9 @@ function createRoad(){
 
  for(let z=0;z<250;z+=11){
   for(let i=1;i<5;i++){
-   const line=box(.15,.025,3.3,neon(0x74a8ff));
+   const line=box(
+    .15,.025,3.3,neon(0x74a8ff)
+   );
    line.position.set(-10+i*4,.09,18-z);
    scene.add(line);
    roadLines.push(line);
@@ -377,19 +497,25 @@ function createRoad(){
  }
 
  [-12.5,12.5].forEach(x=>{
-  const pavement=box(4,.35,550,mat(0x1d2143));
+  const pavement=box(
+   4,.35,550,mat(0x1d2143)
+  );
   pavement.position.set(x,-.04,-135);
   scene.add(pavement);
 
-  const strip=box(.14,.13,550,neon(0xff38cc));
-  strip.position.set(x<0?-10.7:10.7,.2,-135);
+  const strip=box(
+   .14,.13,550,neon(0xff38cc)
+  );
+  strip.position.set(
+   x<0?-10.7:10.7,.2,-135
+  );
   scene.add(strip);
  });
 }
 
-// ==================================
-// GEDUNG KOTA NEON
-// ==================================
+// ==========================================
+// GEDUNG KOTA WARNA WARNI
+// ==========================================
 
 function createCity(){
  const colors=[
@@ -405,30 +531,51 @@ function createCity(){
    const h=12+(i*13%24);
    const w=4+(i%4)*1.2;
    const d=5+(i%3)*2;
-   const pair=colors[(i+(side===1?2:0))%5];
+
+   const pair=colors[
+    (i+(side===1?2:0))%5
+   ];
 
    const g=new THREE.Group();
-   addBox(g,w,h,d,mat(pair[0]),0,h/2,0);
+
+   addBox(
+    g,w,h,d,mat(pair[0]),
+    0,h/2,0
+   );
 
    const lights=neon(pair[1]);
-   const faceX=side<0?w/2+.04:-w/2-.04;
+   const faceX=side<0
+    ?w/2+.04:-w/2-.04;
 
    for(let y=2;y<h-1;y+=2.5){
     for(let z=-d/2+1;z<d/2;z+=1.6){
-     if(Math.floor(y+z+i)%4===0)continue;
-     addBox(g,.08,.85,.6,lights,faceX,y,z);
+     if(Math.floor(y+z+i)%4===0){
+      continue;
+     }
+
+     addBox(
+      g,.08,.85,.6,lights,
+      faceX,y,z
+     );
     }
    }
 
-   addBox(g,.15,h,.15,lights,
-    side<0?w/2+.1:-w/2-.1,h/2,d/2+.1
+   addBox(
+    g,.15,h,.15,lights,
+    side<0?w/2+.1:-w/2-.1,
+    h/2,d/2+.1
    );
 
-   addBox(g,.12,2,.12,lights,0,h+1,0);
+   addBox(
+    g,.12,2,.12,lights,
+    0,h+1,0
+   );
 
    g.position.set(
-    side*(16+(i%4)*7),0,15-i*9.5
+    side*(16+(i%4)*7),
+    0,15-i*9.5
    );
+
    scene.add(g);
    city.push(g);
   }
@@ -438,9 +585,19 @@ function createCity(){
   for(const side of [-1,1]){
    const g=new THREE.Group();
    const pole=mat(0x57617e);
-   addBox(g,.15,7,.15,pole,side*12,3.5,0);
-   addBox(g,2,.15,.16,pole,side*11,7,0);
-   addBox(g,1,.12,.6,neon(0x00eaff),
+
+   addBox(
+    g,.15,7,.15,pole,
+    side*12,3.5,0
+   );
+
+   addBox(
+    g,2,.15,.16,pole,
+    side*11,7,0
+   );
+
+   addBox(
+    g,1,.12,.6,neon(0x00eaff),
     side*10.2,6.9,0
    );
 
@@ -451,33 +608,61 @@ function createCity(){
  }
 }
 
-// ==================================
+// ==========================================
 // ROBOT 3D
-// ==================================
+// ==========================================
 
 function createRobot(){
  robot=new THREE.Group();
 
- const chrome=mat(0xc7e7ff,0x1389ff,.15);
- const blue=mat(0x06bce9,0x0055ff,.45);
+ const chrome=mat(
+  0xc7e7ff,0x1389ff,.15
+ );
+ const blue=mat(
+  0x06bce9,0x0055ff,.45
+ );
  const dark=mat(0x15234d);
  const eye=neon(0x00ffff);
  const gold=neon(0xffd84e);
 
- body=addBox(robot,1.25,1.65,.75,blue,0,2.05,0);
- addBox(body,.65,.42,.08,gold,0,.12,.42);
+ body=addBox(
+  robot,1.25,1.65,.75,
+  blue,0,2.05,0
+ );
+ addBox(
+  body,.65,.42,.08,
+  gold,0,.12,.42
+ );
 
  head=new THREE.Group();
  head.position.y=3.35;
  robot.add(head);
 
- addBox(head,1.18,.95,.9,chrome,0,0,0);
- addBox(head,.92,.34,.07,dark,0,.08,.49);
- addBox(head,.25,.13,.08,eye,-.22,.09,.54);
- addBox(head,.25,.13,.08,eye,.22,.09,.54);
+ addBox(
+  head,1.18,.95,.9,
+  chrome,0,0,0
+ );
+ addBox(
+  head,.92,.34,.07,
+  dark,0,.08,.49
+ );
+ addBox(
+  head,.25,.13,.08,
+  eye,-.22,.09,.54
+ );
+ addBox(
+  head,.25,.13,.08,
+  eye,.22,.09,.54
+ );
 
- addBox(robot,.8,.2,.3,chrome,0,3.95,0);
- addBox(robot,.13,.5,.13,gold,0,4.24,0);
+ addBox(
+  robot,.8,.2,.3,
+  chrome,0,3.95,0
+ );
+ addBox(
+  robot,.13,.5,.13,
+  gold,0,4.24,0
+ );
 
  robot.userData.arms=[];
 
@@ -485,28 +670,42 @@ function createRobot(){
   const arm=new THREE.Group();
   arm.position.set(s*.9,2.65,0);
   robot.add(arm);
-  addBox(arm,.36,1.25,.42,chrome,0,-.55,0);
+
+  addBox(
+   arm,.36,1.25,.42,
+   chrome,0,-.55,0
+  );
+
   robot.userData.arms.push(arm);
  }
 
  leftLeg=new THREE.Group();
  rightLeg=new THREE.Group();
+
  leftLeg.position.set(-.4,1.25,0);
  rightLeg.position.set(.4,1.25,0);
+
  robot.add(leftLeg,rightLeg);
 
  [leftLeg,rightLeg].forEach(g=>{
-  addBox(g,.48,1.05,.53,chrome,0,-.53,0);
-  addBox(g,.65,.27,.95,blue,0,-1,.2);
+  addBox(
+   g,.48,1.05,.53,
+   chrome,0,-.53,0
+  );
+
+  addBox(
+   g,.65,.27,.95,
+   blue,0,-1,.2
+  );
  });
 
  robot.position.set(0,0,PLAYER_Z);
  scene.add(robot);
 }
 
-// ==================================
+// ==========================================
 // BINTANG DAN METEOR
-// ==================================
+// ==========================================
 
 function createStars(){
  const points=[];
@@ -520,20 +719,28 @@ function createStars(){
  }
 
  const geo=new THREE.BufferGeometry();
- geo.setAttribute("position",
-  new THREE.Float32BufferAttribute(points,3)
+
+ geo.setAttribute(
+  "position",
+  new THREE.Float32BufferAttribute(
+   points,3
+  )
  );
 
  scene.add(new THREE.Points(
-  geo,new THREE.PointsMaterial({
-   color:0xffffff,size:.35
+  geo,
+  new THREE.PointsMaterial({
+   color:0xffffff,
+   size:.35
   })
  ));
 
  for(let i=0;i<10;i++){
   const meteor=new THREE.Mesh(
    new THREE.SphereGeometry(.35,8,8),
-   new THREE.MeshBasicMaterial({color:0xff8e35})
+   new THREE.MeshBasicMaterial({
+    color:0xff8e35
+   })
   );
 
   meteor.position.set(
@@ -547,22 +754,24 @@ function createStars(){
  }
 }
 
-// ==================================
-// SISTEM FOTO PNG
-// ==================================
-
-// Foto digunakan pada kartu jawaban
-// sekaligus pada gerbang 3D.
+// ==========================================
+// FOTO PESERTA
+// ==========================================
 
 function cropFace(img,h,w=512,height=512){
- const canvas=document.createElement("canvas");
+ const canvas=document.createElement(
+  "canvas"
+ );
  canvas.width=w;
  canvas.height=height;
- const cx=canvas.getContext("2d");
 
+ const cx=canvas.getContext("2d");
  const iw=img.naturalWidth;
  const ih=img.naturalHeight;
- const focus=FACE_FOCUS[h]||{x:.5,y:.24};
+
+ const focus=FACE_FOCUS[h]||{
+  x:.5,y:.24
+ };
 
  const targetRatio=w/height;
  const sourceRatio=iw/ih;
@@ -576,17 +785,29 @@ function cropFace(img,h,w=512,height=512){
   sh=sw/targetRatio;
  }
 
- const sx=Math.max(0,Math.min(
-  iw-sw,focus.x*iw-sw/2
- ));
+ const sx=Math.max(
+  0,
+  Math.min(
+   iw-sw,
+   focus.x*iw-sw/2
+  )
+ );
 
- const sy=Math.max(0,Math.min(
-  ih-sh,focus.y*ih-sh*.32
- ));
+ const sy=Math.max(
+  0,
+  Math.min(
+   ih-sh,
+   focus.y*ih-sh*.32
+  )
+ );
 
  cx.fillStyle="#17294a";
  cx.fillRect(0,0,w,height);
- cx.drawImage(img,sx,sy,sw,sh,0,0,w,height);
+
+ cx.drawImage(
+  img,sx,sy,sw,sh,
+  0,0,w,height
+ );
 
  return canvas;
 }
@@ -600,12 +821,21 @@ function setPhoto(h,url){
   if(photoStates[h]==="ok")return;
 
   try{
-   const cardCanvas=cropFace(img,h,480,360);
-   const gateCanvas=cropFace(img,h,448,528);
+   const cardCanvas=cropFace(
+    img,h,480,360
+   );
+   const gateCanvas=cropFace(
+    img,h,448,528
+   );
 
-   photos[h]=cardCanvas.toDataURL("image/jpeg",.88);
+   photos[h]=cardCanvas.toDataURL(
+    "image/jpeg",.88
+   );
 
-   const texture=new THREE.CanvasTexture(gateCanvas);
+   const texture=new THREE.CanvasTexture(
+    gateCanvas
+   );
+
    texture.colorSpace=THREE.SRGBColorSpace;
    texture.minFilter=THREE.LinearFilter;
    texture.magFilter=THREE.LinearFilter;
@@ -615,8 +845,11 @@ function setPhoto(h,url){
    photoStates[h]="ok";
    photoLoaded++;
 
-   $("photoCount").textContent="FOTO "+photoLoaded+"/5";
-   $("loading").textContent="Foto siap: "+photoLoaded+"/5";
+   $("photoCount").textContent=
+    "FOTO "+photoLoaded+"/5";
+
+   $("loading").textContent=
+    "Foto siap: "+photoLoaded+"/5";
 
    applyPhotoTexture();
    refreshAnswers();
@@ -630,10 +863,9 @@ function setPhoto(h,url){
 
  img.onerror=()=>{
   photoStates[h]="error";
-  console.warn("Foto gagal:",url);
 
   $("loading").textContent=
-   "Foto "+h+" gagal. Periksa file PNG di GitHub.";
+   "Foto "+h+" gagal dimuat.";
 
   refreshAnswers();
  };
@@ -641,7 +873,6 @@ function setPhoto(h,url){
  img.src=url;
 }
 
-// Membaca lima file PNG dari GitHub Pages
 function initPhotos(){
  LETTERS.forEach(h=>{
   photoStates[h]="loading";
@@ -649,18 +880,24 @@ function initPhotos(){
  });
 }
 
-// Memasang foto ke panel 3D
 function applyTexturesToGroup(group){
  group.traverse(mesh=>{
   if(!mesh.isMesh)return;
 
   const h=mesh.userData.letter;
-  if(!h||!photoTextures[h])return;
+
+  if(!h||!photoTextures[h]){
+   return;
+  }
 
   const texture=photoTextures[h];
-  if(mesh.material.map===texture)return;
+
+  if(mesh.material.map===texture){
+   return;
+  }
 
   const old=mesh.material;
+
   mesh.material=new THREE.MeshBasicMaterial({
    map:texture,
    color:0xffffff,
@@ -680,69 +917,140 @@ function applyPhotoTexture(){
  });
 }
 
-// ==================================
-// RINTANGAN
-// ==================================
+// ==========================================
+// RINTANGAN BARU FULL 5 JALUR
+// ==========================================
+
+// Rintangan "low" = wajib lompat.
+// Rintangan "high" = wajib menunduk.
+// Keduanya menutup seluruh trek A-E.
 
 function createObstacle(kind,laneIndex,world){
  const g=new THREE.Group();
- const red=mat(0xff234c,0xff0033,.65);
+
+ const red=mat(
+  0xff234c,0xff0033,.75
+ );
  const yellow=neon(0xffcc18);
+ const cyan=neon(0x00eaff);
+
+ const width=20.4;
 
  if(kind==="low"){
-  addBox(g,2.85,1.35,.8,red,0,.7,0);
 
-  for(let i=0;i<3;i++){
+  // Dinding bawah sepanjang 5 jalur
+  addBox(
+   g,width,1.25,1.1,
+   red,0,.625,0
+  );
+
+  // Pola kuning pada rintangan
+  for(let x=-9.2;x<=9.3;x+=1.7){
    const stripe=addBox(
-    g,.35,1.45,.86,yellow,
-    -.9+i*.9,.7,0
+    g,.62,1.28,1.13,
+    yellow,x,.625,0
    );
-   stripe.rotation.z=.32;
+   stripe.rotation.z=.34;
   }
 
+  // Lampu neon atas dinding
+  addBox(
+   g,width,.14,1.19,
+   cyan,0,1.33,0
+  );
+
  }else{
-  addBox(g,.28,4,.6,red,-1.5,2,0);
-  addBox(g,.28,4,.6,red,1.5,2,0);
-  addBox(g,3.25,.9,.8,yellow,0,3.55,0);
-  addBox(g,3.25,.22,.9,red,0,3.05,0);
+
+  // Palang gantung sepanjang 5 jalur
+  addBox(
+   g,width,1.05,1.1,
+   red,0,3.25,0
+  );
+
+  // Garis lampu bawah palang
+  addBox(
+   g,width,.16,1.18,
+   yellow,0,2.65,0
+  );
+
+  // Garis lampu atas palang
+  addBox(
+   g,width,.16,1.18,
+   cyan,0,3.85,0
+  );
+
+  // Pola peringatan
+  for(let x=-9;x<=9;x+=3){
+   addBox(
+    g,.5,1.1,1.14,
+    yellow,x,3.25,0
+   );
+  }
+
+  // Tiang di luar jalur
+  addBox(
+   g,.22,4.1,.5,
+   cyan,-10.45,2.05,0
+  );
+
+  addBox(
+   g,.22,4.1,.5,
+   cyan,10.45,2.05,0
+  );
  }
 
- g.position.x=LANE_X[laneIndex];
+ // Semua rintangan berada di tengah
+ // dan menutup seluruh lima jalur.
+ g.position.x=0;
  scene.add(g);
 
  return {
-  type:"obstacle",kind,
-  lane:laneIndex,world,group:g,hit:false
+  type:"obstacle",
+  kind,
+  lane:-1,
+  world,
+  group:g,
+  hit:false
  };
 }
 
-// ==================================
+// ==========================================
 // KOIN EMAS
-// ==================================
+// ==========================================
 
 function createCoin(laneIndex,world){
  const g=new THREE.Group();
- const gold=mat(0xffd11c,0xffb300,.8);
+
+ const gold=mat(
+  0xffd11c,0xffb300,.8
+ );
 
  const coin=new THREE.Mesh(
-  new THREE.TorusGeometry(.58,.19,10,20),
+  new THREE.TorusGeometry(
+   .58,.19,10,20
+  ),
   gold
  );
 
  coin.rotation.y=Math.PI/2;
  coin.position.y=1.6;
+
  g.add(coin);
  scene.add(g);
 
  return {
-  type:"coin",lane:laneIndex,
-  world,group:g,coin,hit:false
+  type:"coin",
+  lane:laneIndex,
+  world,
+  group:g,
+  coin,
+  hit:false
  };
 }
 
-// ==================================
+// ==========================================
 // GERBANG FOTO A B C D E
-// ==================================
+// ==========================================
 
 function createGate(index,world){
  const group=new THREE.Group();
@@ -751,22 +1059,31 @@ function createGate(index,world){
 
  for(let i=0;i<5;i++){
   const h=LETTERS[i];
+
   const gate=new THREE.Group();
   gate.position.x=LANE_X[i];
 
-  addBox(gate,.2,6,.5,
-   i%2===0?cyan:pink,-1.75,3,0
+  addBox(
+   gate,.2,6,.5,
+   i%2===0?cyan:pink,
+   -1.75,3,0
   );
 
-  addBox(gate,.2,6,.5,
-   i%2===0?cyan:pink,1.75,3,0
+  addBox(
+   gate,.2,6,.5,
+   i%2===0?cyan:pink,
+   1.75,3,0
   );
 
-  addBox(gate,3.7,.25,.5,cyan,0,6,0);
+  addBox(
+   gate,3.7,.25,.5,
+   cyan,0,6,0
+  );
 
-  // Panel foto portrait
   const panel=new THREE.Mesh(
-   new THREE.PlaneGeometry(2.8,3.3),
+   new THREE.PlaneGeometry(
+    2.8,3.3
+   ),
    new THREE.MeshBasicMaterial({
     color:0x284266,
     side:THREE.DoubleSide
@@ -777,12 +1094,14 @@ function createGate(index,world){
   panel.userData.letter=h;
   gate.add(panel);
 
-  // Huruf jawaban
-  const c=document.createElement("canvas");
+  const c=document.createElement(
+   "canvas"
+  );
   c.width=256;
   c.height=128;
 
   const cx=c.getContext("2d");
+
   cx.fillStyle="#091831";
   cx.fillRect(0,0,256,128);
   cx.fillStyle="#ffe348";
@@ -808,13 +1127,17 @@ function createGate(index,world){
  applyTexturesToGroup(group);
 
  return {
-  type:"gate",index,world,group,hit:false
+  type:"gate",
+  index,
+  world,
+  group,
+  hit:false
  };
 }
 
-// ==================================
-// SUSUNAN TREK PANJANG
-// ==================================
+// ==========================================
+// SUSUNAN TREK DAN RINTANGAN
+// ==========================================
 
 function createGameObjects(){
  for(const obj of gameObjects){
@@ -822,17 +1145,29 @@ function createGameObjects(){
 
   obj.group.traverse(child=>{
    if(!child.isMesh)return;
-   if(child.geometry)child.geometry.dispose();
 
-   const materials=Array.isArray(child.material)
-    ?child.material:[child.material];
+   if(child.geometry){
+    child.geometry.dispose();
+   }
+
+   const materials=Array.isArray(
+    child.material
+   )
+    ?child.material
+    :[child.material];
 
    materials.forEach(m=>{
     if(!m)return;
-    if(m.map &&
-       !Object.values(photoTextures).includes(m.map)){
+
+    if(
+     m.map &&
+     !Object.values(photoTextures).includes(
+      m.map
+     )
+    ){
      m.map.dispose();
     }
+
     m.dispose();
    });
   });
@@ -843,19 +1178,48 @@ function createGameObjects(){
  for(let i=0;i<QUESTIONS.length;i++){
   const base=i*STEP;
 
-  gameObjects.push(createCoin(i%5,base+180));
-  gameObjects.push(createCoin((i+1)%5,base+350));
-  gameObjects.push(createObstacle(
-   "low",(i*2+1)%5,base+520
-  ));
-  gameObjects.push(createCoin((i+2)%5,base+690));
-  gameObjects.push(createCoin((i+3)%5,base+850));
-  gameObjects.push(createObstacle(
-   "high",(i*3+3)%5,base+1020
-  ));
-  gameObjects.push(createCoin((i+4)%5,base+1190));
-  gameObjects.push(createCoin((i+1)%5,base+1360));
-  gameObjects.push(createGate(i,base+GATE_DIST));
+  gameObjects.push(
+   createCoin(i%5,base+180)
+  );
+
+  gameObjects.push(
+   createCoin((i+1)%5,base+350)
+  );
+
+  // RINTANGAN 1 WAJIB LOMPAT
+  gameObjects.push(
+   createObstacle(
+    "low",-1,base+520
+   )
+  );
+
+  gameObjects.push(
+   createCoin((i+2)%5,base+690)
+  );
+
+  gameObjects.push(
+   createCoin((i+3)%5,base+850)
+  );
+
+  // RINTANGAN 2 WAJIB MENUNDUK
+  gameObjects.push(
+   createObstacle(
+    "high",-1,base+1020
+   )
+  );
+
+  gameObjects.push(
+   createCoin((i+4)%5,base+1190)
+  );
+
+  gameObjects.push(
+   createCoin((i+1)%5,base+1360)
+  );
+
+  // GERBANG PERTANYAAN
+  gameObjects.push(
+   createGate(i,base+GATE_DIST)
+  );
  }
 
  updateObjects();
@@ -864,18 +1228,27 @@ function createGameObjects(){
 function updateObjects(){
  for(const obj of gameObjects){
   const d=obj.world-progress;
-  obj.group.position.z=PLAYER_Z-d*Z_FACTOR;
-  obj.group.visible=!obj.hit&&d>-30&&d<VIEW_DISTANCE;
+
+  obj.group.position.z=
+   PLAYER_Z-d*Z_FACTOR;
+
+  obj.group.visible=
+   !obj.hit &&
+   d>-30 &&
+   d<VIEW_DISTANCE;
  }
 }
 
-// ==================================
-// HUD, SKOR DAN GAMEPLAY
-// ==================================
+// ==========================================
+// STATUS SKOR DAN JARAK
+// ==========================================
 
 function updateHUD(){
- $("score").textContent="⭐ "+score;
- $("level").textContent="SOAL "+answered+"/10";
+ $("score").textContent=
+  "⭐ "+score;
+
+ $("level").textContent=
+  "SOAL "+answered+"/10";
 }
 
 function updateDistance(){
@@ -884,13 +1257,22 @@ function updateDistance(){
   return;
  }
 
- const d=Math.max(0,Math.ceil(
-  answered*STEP+GATE_DIST-progress
- ));
+ const d=Math.max(
+  0,
+  Math.ceil(
+   answered*STEP+
+   GATE_DIST-progress
+  )
+ );
 
  $("distance").textContent=
-  "GERBANG "+(answered+1)+": "+d+" unit";
+  "GERBANG "+(answered+1)+
+  ": "+d+" unit";
 }
+
+// ==========================================
+// RESET PERMAINAN
+// ==========================================
 
 function resetGame(){
  lane=2;
@@ -906,7 +1288,9 @@ function resetGame(){
  messageTime=0;
 
  robot.scale.setScalar(1);
- robot.position.set(0,0,PLAYER_Z);
+ robot.position.set(
+  0,0,PLAYER_Z
+ );
  body.scale.y=1;
  head.position.y=3.35;
  camera.position.x=0;
@@ -923,14 +1307,24 @@ function resetGame(){
  state="playing";
 }
 
+// ==========================================
+// GERAK ROBOT
+// ==========================================
+
 function move(dir){
  if(state!=="playing")return;
- lane=Math.max(0,Math.min(4,lane+dir));
+
+ lane=Math.max(
+  0,
+  Math.min(4,lane+dir)
+ );
+
  refreshAnswers();
 }
 
 function jump(){
  if(state!=="playing")return;
+
  if(jumpTime===0&&duckTime===0){
   jumpTime=1.2;
  }
@@ -938,22 +1332,28 @@ function jump(){
 
 function duck(){
  if(state!=="playing")return;
+
  if(duckTime===0&&jumpTime===0){
   duckTime=1.15;
  }
 }
 
 function currentQuiz(){
- if(answered>=QUESTIONS.length)return -1;
+ if(answered>=QUESTIONS.length){
+  return -1;
+ }
 
- const d=answered*STEP+GATE_DIST-progress;
+ const d=
+  answered*STEP+
+  GATE_DIST-progress;
+
  return d<QUESTION_DISTANCE&&d>=-10
   ?answered:-1;
 }
 
-// ==================================
-// PILIHAN JAWABAN DENGAN FOTO
-// ==================================
+// ==========================================
+// KUIS DENGAN FOTO PESERTA
+// ==========================================
 
 function refreshAnswers(){
  const qi=currentQuiz();
@@ -964,8 +1364,10 @@ function refreshAnswers(){
  }
 
  $("quiz").style.display="block";
+
  $("question").textContent=
-  "SOAL "+(qi+1)+": "+QUESTIONS[qi].q;
+  "SOAL "+(qi+1)+": "+
+  QUESTIONS[qi].q;
 
  $("answers").innerHTML=
   QUESTIONS[qi].a.map((a,i)=>{
@@ -974,24 +1376,34 @@ function refreshAnswers(){
    const photo=photos[h]
     ?`<img src="${photos[h]}" alt="Foto ${h}">`
     :`<div class="placeholder">${
-      photoStates[h]==="error"?"Foto gagal":"Memuat..."
+      photoStates[h]==="error"
+       ?"Foto gagal"
+       :"Memuat..."
      }</div>`;
 
    return `
-   <button class="answer ${lane===i?"selected":""}"
-    data-i="${i}">
-    <b>${h}</b>
-    <div class="faceFrame">${photo}</div>
-    <span class="choice">${a}</span>
-   </button>`;
+    <button class="answer ${
+     lane===i?"selected":""
+    }" data-i="${i}">
+     <b>${h}</b>
+     <div class="faceFrame">
+      ${photo}
+     </div>
+     <span class="choice">
+      ${a}
+     </span>
+    </button>
+   `;
   }).join("");
 
- $("answers").querySelectorAll("button").forEach(b=>{
-  b.onclick=()=>{
-   lane=Number(b.dataset.i);
-   refreshAnswers();
-  };
- });
+ $("answers")
+  .querySelectorAll("button")
+  .forEach(b=>{
+   b.onclick=()=>{
+    lane=Number(b.dataset.i);
+    refreshAnswers();
+   };
+  });
 }
 
 function message(text){
@@ -1000,20 +1412,24 @@ function message(text){
  messageTime=1.4;
 }
 
-// ==================================
+// ==========================================
 // GAME OVER DAN MENANG
-// ==================================
+// ==========================================
 
 function gameOver(){
  if(state!=="playing")return;
 
  state="dead";
  $("quiz").style.display="none";
- $("endTitle").textContent="💀 GAME OVER";
+
+ $("endTitle").textContent=
+  "💀 GAME OVER";
+
  $("endInfo").innerHTML=
-  "Robot menabrak rintangan!<br><br>"+
-  "Skor: "+score+
-  "<br>Soal selesai: "+answered+"/10";
+  "Robot menabrak rintangan!"+
+  "<br><br>Skor: "+score+
+  "<br>Soal selesai: "+
+  answered+"/10";
 
  $("endScreen").style.display="flex";
  crashSound();
@@ -1022,7 +1438,10 @@ function gameOver(){
 function finish(){
  state="win";
  $("quiz").style.display="none";
- $("endTitle").textContent="🏆 KAMU MENANG!";
+
+ $("endTitle").textContent=
+  "🏆 KAMU MENANG!";
+
  $("endInfo").innerHTML=
   "Selamat! 10 soal PLTU berhasil dilewati."+
   "<br>Skor akhir: "+score;
@@ -1031,8 +1450,13 @@ function finish(){
  winSound();
 }
 
+// ==========================================
+// PENILAIAN JAWABAN
+// ==========================================
+
 function resolveGate(obj){
  if(obj.hit)return;
+
  obj.hit=true;
 
  const q=QUESTIONS[obj.index];
@@ -1040,13 +1464,30 @@ function resolveGate(obj){
 
  if(lane===q.c){
   score+=100;
-  robotSize=Math.min(1.55,robotSize+.065);
+
+  robotSize=Math.min(
+   1.55,
+   robotSize+.065
+  );
+
   message("✅ JAWABAN BENAR +100");
   correctSound();
+
  }else{
-  score=Math.max(0,score-30);
-  robotSize=Math.max(.78,robotSize-.06);
-  message("❌ SALAH! Jawaban "+LETTERS[q.c]);
+  score=Math.max(
+   0,score-30
+  );
+
+  robotSize=Math.max(
+   .78,
+   robotSize-.06
+  );
+
+  message(
+   "❌ SALAH! Jawaban "+
+   LETTERS[q.c]
+  );
+
   wrongSound();
  }
 
@@ -1058,30 +1499,38 @@ function resolveGate(obj){
  }
 }
 
-// ==================================
-// UPDATE PERMAINAN
-// ==================================
+// ==========================================
+// PERGERAKAN DAN TABRAKAN
+// ==========================================
 
 function updateGame(dt){
  if(state!=="playing")return;
+
  dt=Math.min(dt,.05);
 
  const before=progress;
+
  progress+=SPEED*dt;
  gameTime+=dt;
 
  const oldJump=jumpTime;
  const oldDuck=duckTime;
 
- jumpTime=Math.max(0,jumpTime-dt);
- duckTime=Math.max(0,duckTime-dt);
+ jumpTime=Math.max(
+  0,jumpTime-dt
+ );
+ duckTime=Math.max(
+  0,duckTime-dt
+ );
 
  robot.position.x+=
   (LANE_X[lane]-robot.position.x)*
   Math.min(1,dt*12);
 
  robot.position.y=jumpTime>0
-  ?Math.sin(Math.PI*(1-jumpTime/1.2))*3.4
+  ?Math.sin(
+    Math.PI*(1-jumpTime/1.2)
+   )*3.4
   :0;
 
  const crouch=duckTime>0;
@@ -1091,64 +1540,93 @@ function updateGame(dt){
   Math.min(1,dt*20);
 
  head.position.y+=
-  ((crouch?2.25:3.35)-head.position.y)*
+  ((crouch?2.25:3.35)-
+   head.position.y)*
   Math.min(1,dt*20);
 
  robot.scale.setScalar(robotSize);
 
  const run=Math.sin(gameTime*11);
+
  leftLeg.rotation.x=run*.43;
  rightLeg.rotation.x=-run*.43;
 
- robot.userData.arms.forEach((arm,i)=>{
-  arm.rotation.x=run*(i===0?-.38:.38);
- });
+ robot.userData.arms.forEach(
+  (arm,i)=>{
+   arm.rotation.x=
+    run*(i===0?-.38:.38);
+  }
+ );
 
  camera.position.x+=
-  (robot.position.x*.2-camera.position.x)*
+  (robot.position.x*.2-
+   camera.position.x)*
   Math.min(1,dt*2);
 
- camera.lookAt(camera.position.x*.25,3,-35);
+ camera.lookAt(
+  camera.position.x*.25,
+  3,-35
+ );
 
  for(const obj of gameObjects){
   if(obj.hit)continue;
 
-  if(obj.world>before&&obj.world<=progress){
+  if(
+   obj.world>before &&
+   obj.world<=progress
+  ){
+
+   // ==================================
+   // TABRAKAN RINTANGAN SEMUA JALUR
+   // ==================================
 
    if(obj.type==="obstacle"){
     obj.hit=true;
 
-    if(obj.lane===lane){
-     const jumpPhase=oldJump>0
-      ?Math.sin(Math.PI*(1-oldJump/1.2))
-      :0;
+    // Tidak ada jalur yang bebas.
+    // Semua rintangan wajib ditangani
+    // dengan lompat atau menunduk.
 
-     const safe=obj.kind==="low"
-      ?jumpPhase>.4
-      :(oldDuck>0||duckTime>0);
+    const jumpPhase=oldJump>0
+     ?Math.sin(
+       Math.PI*(1-oldJump/1.2)
+      )
+     :0;
 
-     if(!safe){
-      gameOver();
-      break;
-     }
+    const safe=obj.kind==="low"
+     ?jumpPhase>.4
+     :(oldDuck>0||duckTime>0);
 
-     score+=10;
-     updateHUD();
+    if(!safe){
+     gameOver();
+     break;
     }
+
+    // Berhasil melewati rintangan
+    score+=10;
+    updateHUD();
 
    }else if(obj.type==="coin"){
     obj.hit=true;
 
     if(obj.lane===lane){
      score+=20;
-     robotSize=Math.min(1.55,robotSize+.012);
+
+     robotSize=Math.min(
+      1.55,
+      robotSize+.012
+     );
+
      updateHUD();
      coinSound();
     }
 
    }else if(obj.type==="gate"){
     resolveGate(obj);
-    if(state!=="playing")break;
+
+    if(state!=="playing"){
+     break;
+    }
    }
   }
 
@@ -1162,7 +1640,10 @@ function updateGame(dt){
 
  const qi=currentQuiz();
 
- if(qi!==lastQuiz||lane!==lastLane){
+ if(
+  qi!==lastQuiz ||
+  lane!==lastLane
+ ){
   lastQuiz=qi;
   lastLane=lane;
   refreshAnswers();
@@ -1177,14 +1658,16 @@ function updateGame(dt){
  }
 }
 
-// ==================================
-// ANIMASI 3D
-// ==================================
+// ==========================================
+// ANIMASI KOTA DAN METEOR
+// ==========================================
 
 function animate(){
  if(!renderer)return;
 
- const dt=Math.min(clock.getDelta(),.05);
+ const dt=Math.min(
+  clock.getDelta(),.05
+ );
 
  if(state==="playing"){
   updateGame(dt);
@@ -1193,6 +1676,7 @@ function animate(){
 
   for(const line of roadLines){
    line.position.z+=delta;
+
    if(line.position.z>20){
     line.position.z-=253;
    }
@@ -1223,9 +1707,9 @@ function animate(){
  renderer.render(scene,camera);
 }
 
-// ==================================
+// ==========================================
 // MUSIK EDM 150 BPM
-// ==================================
+// ==========================================
 
 let audio=null;
 let masterGain=null;
@@ -1241,14 +1725,17 @@ const STEP_TIME=60/BPM/4;
 function initAudio(){
  try{
   if(!audio){
-   const AC=window.AudioContext||
+   const AC=
+    window.AudioContext||
     window.webkitAudioContext;
 
    if(!AC)return;
 
    audio=new AC();
    masterGain=audio.createGain();
-   compressor=audio.createDynamicsCompressor();
+
+   compressor=
+    audio.createDynamicsCompressor();
 
    compressor.threshold.value=-14;
    compressor.knee.value=16;
@@ -1257,7 +1744,9 @@ function initAudio(){
    compressor.release.value=.16;
 
    masterGain.connect(compressor);
-   compressor.connect(audio.destination);
+   compressor.connect(
+    audio.destination
+   );
   }
 
   if(audio.state==="suspended"){
@@ -1284,26 +1773,41 @@ function updateVolume(){
   muted||v===0?"🔇":"🔊";
 }
 
-function tone(frequency,duration,type="sawtooth",
- volume=.15,when=null){
-
+function tone(
+ frequency,
+ duration,
+ type="sawtooth",
+ volume=.15,
+ when=null
+){
  if(!audio)return;
 
- const t=when===null?audio.currentTime:when;
+ const t=when===null
+  ?audio.currentTime
+  :when;
+
  const osc=audio.createOscillator();
  const gain=audio.createGain();
 
  osc.type=type;
- osc.frequency.setValueAtTime(frequency,t);
 
- gain.gain.setValueAtTime(.001,t);
- gain.gain.linearRampToValueAtTime(volume,t+.008);
+ osc.frequency.setValueAtTime(
+  frequency,t
+ );
+
+ gain.gain.setValueAtTime(
+  .001,t
+ );
+ gain.gain.linearRampToValueAtTime(
+  volume,t+.008
+ );
  gain.gain.exponentialRampToValueAtTime(
   .001,t+duration
  );
 
  osc.connect(gain);
  gain.connect(masterGain);
+
  osc.start(t);
  osc.stop(t+duration+.02);
 }
@@ -1315,18 +1819,23 @@ function kick(t){
  const g=audio.createGain();
 
  o.type="sine";
- o.frequency.setValueAtTime(165,t);
+ o.frequency.setValueAtTime(
+  165,t
+ );
  o.frequency.exponentialRampToValueAtTime(
   43,t+.16
  );
 
- g.gain.setValueAtTime(.75,t);
+ g.gain.setValueAtTime(
+  .75,t
+ );
  g.gain.exponentialRampToValueAtTime(
   .001,t+.25
  );
 
  o.connect(g);
  g.connect(masterGain);
+
  o.start(t);
  o.stop(t+.26);
 }
@@ -1337,6 +1846,7 @@ function getNoise(){
  if(noiseBuffer)return noiseBuffer;
 
  const length=audio.sampleRate;
+
  noiseBuffer=audio.createBuffer(
   1,length,audio.sampleRate
  );
@@ -1350,7 +1860,9 @@ function getNoise(){
  return noiseBuffer;
 }
 
-function noiseHit(t,duration,volume,highpass){
+function noiseHit(
+ t,duration,volume,highpass
+){
  if(!audio)return;
 
  const source=audio.createBufferSource();
@@ -1361,7 +1873,11 @@ function noiseHit(t,duration,volume,highpass){
  filter.frequency.value=highpass;
 
  const gain=audio.createGain();
- gain.gain.setValueAtTime(volume,t);
+
+ gain.gain.setValueAtTime(
+  volume,t
+ );
+
  gain.gain.exponentialRampToValueAtTime(
   .001,t+duration
  );
@@ -1394,7 +1910,9 @@ function bass(t,step){
   55,82.41,65.41,49
  ];
 
- const f=notes[Math.floor(step/2)%8];
+ const f=notes[
+  Math.floor(step/2)%8
+ ];
 
  tone(f,.18,"sawtooth",.14,t);
  tone(f/2,.21,"sine",.11,t);
@@ -1421,7 +1939,10 @@ function scheduleBeat(step,t){
  if(s===4||s===12)snare(t);
  if(s%2===0)hat(t,s%4===2);
 
- if(s===3||s===7||s===11||s===15){
+ if(
+  s===3||s===7||
+  s===11||s===15
+ ){
   hat(t,false);
  }
 
@@ -1435,16 +1956,26 @@ function scheduleBeat(step,t){
 
 function startMusic(){
  initAudio();
+
  if(!audio||musicTimer)return;
 
  musicStep=0;
- nextBeatTime=audio.currentTime+.05;
+ nextBeatTime=
+  audio.currentTime+.05;
 
  musicTimer=setInterval(()=>{
-  if(!audio||state!=="playing")return;
+  if(!audio||state!=="playing"){
+   return;
+  }
 
-  while(nextBeatTime<audio.currentTime+.16){
-   scheduleBeat(musicStep,nextBeatTime);
+  while(
+   nextBeatTime<
+   audio.currentTime+.16
+  ){
+   scheduleBeat(
+    musicStep,nextBeatTime
+   );
+
    musicStep++;
    nextBeatTime+=STEP_TIME;
   }
@@ -1466,7 +1997,8 @@ function correctSound(){
  tone(660,.13,"sine",.15);
 
  if(audio){
-  tone(990,.16,"sine",.14,
+  tone(
+   990,.16,"sine",.14,
    audio.currentTime+.11
   );
  }
@@ -1485,35 +2017,43 @@ function winSound(){
  stopMusic();
  if(!audio)return;
 
- [523,659,784,1046].forEach((f,i)=>{
-  tone(f,.30,"sine",.20,
-   audio.currentTime+i*.16
-  );
- });
+ [523,659,784,1046].forEach(
+  (f,i)=>{
+   tone(
+    f,.30,"sine",.20,
+    audio.currentTime+i*.16
+   );
+  }
+ );
 }
 
-// ==================================
-// VOLUME
-// ==================================
+// ==========================================
+// PENGATURAN VOLUME
+// ==========================================
 
-$("volume").addEventListener("input",e=>{
- volumeLevel=Number(e.target.value)/100;
+$("volume").addEventListener(
+ "input",e=>{
+  volumeLevel=
+   Number(e.target.value)/100;
 
- if(volumeLevel>0){
-  muted=false;
+  if(volumeLevel>0){
+   muted=false;
+  }
+
+  updateVolume();
  }
+);
 
- updateVolume();
-});
+$("muteBtn").addEventListener(
+ "click",()=>{
+  muted=!muted;
+  updateVolume();
+ }
+);
 
-$("muteBtn").addEventListener("click",()=>{
- muted=!muted;
- updateVolume();
-});
-
-// ==================================
+// ==========================================
 // MULAI GAME
-// ==================================
+// ==========================================
 
 function start(){
  if(!renderer)return;
@@ -1527,9 +2067,9 @@ function start(){
 $("startBtn").onclick=start;
 $("restartBtn").onclick=start;
 
-// ==================================
-// KONTROL HP
-// ==================================
+// ==========================================
+// KONTROL TOMBOL HP
+// ==========================================
 
 $("left").onpointerdown=e=>{
  e.preventDefault();
@@ -1551,64 +2091,110 @@ $("duck").onpointerdown=e=>{
  duck();
 };
 
-// ==================================
+// ==========================================
 // KONTROL KEYBOARD
-// ==================================
+// ==========================================
 
 addEventListener("keydown",e=>{
  if([
-  "ArrowLeft","ArrowRight",
-  "ArrowUp","ArrowDown"," "
+  "ArrowLeft",
+  "ArrowRight",
+  "ArrowUp",
+  "ArrowDown",
+  " "
  ].includes(e.key)){
   e.preventDefault();
  }
 
  if(e.repeat)return;
 
- if(e.key==="ArrowLeft"||e.key==="a")move(-1);
- if(e.key==="ArrowRight"||e.key==="d")move(1);
- if(e.key==="ArrowUp"||e.key===" ")jump();
- if(e.key==="ArrowDown"||e.key==="s")duck();
+ if(
+  e.key==="ArrowLeft"||
+  e.key==="a"
+ ){
+  move(-1);
+ }
 
- if(/^[1-5]$/.test(e.key)&&state==="playing"){
+ if(
+  e.key==="ArrowRight"||
+  e.key==="d"
+ ){
+  move(1);
+ }
+
+ if(
+  e.key==="ArrowUp"||
+  e.key===" "
+ ){
+  jump();
+ }
+
+ if(
+  e.key==="ArrowDown"||
+  e.key==="s"
+ ){
+  duck();
+ }
+
+ if(
+  /^[1-5]$/.test(e.key)&&
+  state==="playing"
+ ){
   lane=Number(e.key)-1;
   refreshAnswers();
  }
 });
 
-// ==================================
-// SWIPE HP
-// ==================================
+// ==========================================
+// KONTROL SWIPE HP
+// ==========================================
 
 let sx=0,sy=0;
 
-$("scene").addEventListener("touchstart",e=>{
- if(!e.touches.length)return;
+$("scene").addEventListener(
+ "touchstart",e=>{
+  if(!e.touches.length)return;
 
- sx=e.touches[0].clientX;
- sy=e.touches[0].clientY;
-},{passive:true});
+  sx=e.touches[0].clientX;
+  sy=e.touches[0].clientY;
+ },
+ {passive:true}
+);
 
-$("scene").addEventListener("touchend",e=>{
- if(!e.changedTouches.length)return;
+$("scene").addEventListener(
+ "touchend",e=>{
+  if(!e.changedTouches.length){
+   return;
+  }
 
- const dx=e.changedTouches[0].clientX-sx;
- const dy=e.changedTouches[0].clientY-sy;
+  const dx=
+   e.changedTouches[0].clientX-sx;
 
- if(Math.max(Math.abs(dx),Math.abs(dy))<25)return;
+  const dy=
+   e.changedTouches[0].clientY-sy;
 
- if(Math.abs(dx)>Math.abs(dy)){
-  move(dx>0?1:-1);
- }else if(dy<0){
-  jump();
- }else{
-  duck();
- }
-},{passive:true});
+  if(
+   Math.max(
+    Math.abs(dx),Math.abs(dy)
+   )<25
+  ){
+   return;
+  }
 
-// ==================================
+  if(Math.abs(dx)>Math.abs(dy)){
+   move(dx>0?1:-1);
+  }else if(dy<0){
+   jump();
+  }else{
+   duck();
+  }
+ },
+ {passive:true}
+);
+
+// ==========================================
 // JALANKAN GAME
-// ==================================
+// ==========================================
 
 setup3D();
 initPhotos();
